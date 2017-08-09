@@ -15,7 +15,7 @@ import java.util.Collection;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
-    //@Autowired
+    @Autowired
     private UserRepository userRepository;
 
     @Override
