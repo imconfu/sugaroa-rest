@@ -1,4 +1,4 @@
-package com.sugaroa.rest;
+package com.sugaroa.rest.web;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -7,10 +7,15 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 //import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.sugaroa.rest.entity.User;
-import com.sugaroa.rest.repository.UserRepository;
+import com.sugaroa.rest.domain.User;
+import com.sugaroa.rest.domain.UserRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -32,13 +37,18 @@ public class TokenController {
      * @throws JSONException
      */
     @RequestMapping("/token/grant")
-    String grant(@RequestParam String account, @RequestParam(required=true, defaultValue="") String password) throws JSONException {
+    //(required=true, defaultValue="")
+    String grant(@RequestParam String account, @RequestParam String password) throws JSONException {
         JSONObject result = new JSONObject();
         result.put("success", false);
         //String account, String password
         try {
             //根据帐号查找用户
             User user = userRepository.findByAccount(account);
+            if(user == null){
+                System.out.println("no user!");
+                throw new Exception("用户不存在");
+            }
             System.out.print(user);
 
             Algorithm algorithm = Algorithm.HMAC256("secret12");
@@ -48,7 +58,7 @@ public class TokenController {
                     .sign(algorithm);
             result.put("token", token);
             result.put("success", true);
-            result.put("user", user.toString());
+            //result.put("user", user.toString());
         } catch (UnsupportedEncodingException exception) {
             //UTF-8 encoding not supported
             result.put("message", exception.toString());
@@ -58,6 +68,9 @@ public class TokenController {
         } catch (JSONException e) {
             e.printStackTrace();
             result.put("message", e.toString());
+        } catch (Exception e) {
+            //e.printStackTrace();
+            result.put("message", e.getMessage());
         }
         return result.toString();
     }
@@ -107,8 +120,28 @@ public class TokenController {
         return "Hello Wor1ld!";
     }
 
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    User user(@PathVariable String id) {
+        return userRepository.findByAccount(id);
+    }
+    @RequestMapping("/users")
+    Page<User> users() {
+        int page=0,size=10;
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = new PageRequest(page, size, sort);
+        return userRepository.findAll(pageable);
+    }
+
     @RequestMapping("/hello/{Name}")
     public String helloName(@PathVariable String Name) {
         return "Hello " + Name;
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public String exceptionHandler(MissingServletRequestParameterException e) {
+        //throw new RuntimeException("异常啦");
+
+        System.out.println(e.getParameterName());
+        return "fuck";
     }
 }

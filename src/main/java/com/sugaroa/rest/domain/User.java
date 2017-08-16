@@ -1,4 +1,4 @@
-package com.sugaroa.rest.entity;
+package com.sugaroa.rest.domain;
 
 import javax.persistence.*;
 

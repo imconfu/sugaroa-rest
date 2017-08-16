@@ -1,6 +1,6 @@
-package com.sugaroa.rest.repository;
+package com.sugaroa.rest.domain;
 
-import com.sugaroa.rest.entity.Purview;
+import com.sugaroa.rest.domain.Purview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

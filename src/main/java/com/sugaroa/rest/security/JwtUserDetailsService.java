@@ -1,8 +1,7 @@
 package com.sugaroa.rest.security;
 
-import com.sugaroa.rest.entity.User;
-import com.sugaroa.rest.repository.UserRepository;
-import com.sugaroa.rest.security.JwtUserDetails;
+import com.sugaroa.rest.domain.User;
+import com.sugaroa.rest.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
