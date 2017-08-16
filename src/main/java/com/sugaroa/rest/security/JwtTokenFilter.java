@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @Component
@@ -35,20 +35,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private String tokenHead;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         String token = request.getHeader(this.token);
         System.out.print("doFilterInternal:" + this.token + ":" + token + "\r\n");
 
-        try {
-            if(token!=null){
+        if (token != null) {
+            try {
                 Algorithm algorithm = Algorithm.HMAC256("secret12");
                 JWTVerifier verifier = JWT.require(algorithm)
                         .withIssuer("auth0")
                         .build(); //Reusable verifier instance
                 DecodedJWT jwt = verifier.verify(token);
 
-                if(SecurityContextHolder.getContext().getAuthentication() == null){
+                if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     String username = jwt.getClaim("account").asString();
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -58,15 +58,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     logger.info("authenticated user " + username + ", setting security context");
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
+            } catch (SignatureVerificationException exception) {
+                //Invalid signature/claims
+                //result = exception.toString();
+                logger.info("JWTVerificationException " + exception.toString());
+                throw exception;
+
             }
-        } catch (UnsupportedEncodingException exception) {
-            //UTF-8 encoding not supported
-            //result = exception.toString();
-            logger.info("UnsupportedEncodingException " + exception.toString());
-        } catch (JWTVerificationException exception) {
-            //Invalid signature/claims
-            //result = exception.toString();
-            logger.info("JWTVerificationException " + exception.toString());
 
         }
 
