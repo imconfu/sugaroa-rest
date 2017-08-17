@@ -50,7 +50,7 @@ public class TokenController {
                 .withIssuer("auth0")
                 .withClaim("account", "confu")
                 .sign(algorithm);
-        return new Result(1, token);
+        return new Result("token", token);
     }
 
     @RequestMapping("/token/verify")
