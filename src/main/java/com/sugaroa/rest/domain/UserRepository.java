@@ -8,9 +8,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(path = "user")
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer>, UserRepositoryCustom {
     //List<User> findbyAccountLike(@Param("account") String account);
     //User findByAccount(@Param("account") String account);
     List<User[]> findByAccountLike(@Param("accountLike") String accountLike);
+
     User findByAccount(@Param("account") String account);
 }

@@ -1,5 +1,6 @@
 package com.sugaroa.rest.exception;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.sugaroa.rest.Result;
 import org.springframework.boot.autoconfigure.web.BasicErrorController;
@@ -37,19 +38,27 @@ public class AppErrorController extends BasicErrorController {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("success", false);
 
-        if ( body.containsKey("exception") ){
-            if(body.get("exception").equals(SignatureVerificationException.class.getName())){
+        if (body.containsKey("exception")) {
+            Object exception = body.get("exception");
+
+            if (exception.equals(SignatureVerificationException.class.getName())) {
                 result.put("code", -100);
                 result.put("message", "签名验证失败");
             }
+
+            if (exception.equals(JWTDecodeException.class.getName())) {
+                result.put("code", -101);
+                result.put("message", "Token解析失败失败");
+            }
+
         }
 
-        if(status == HttpStatus.FORBIDDEN){
+        if (status == HttpStatus.FORBIDDEN) {
             result.put("code", -101);
             result.put("message", "没有访问权限");
         }
 
-        System.out.println("ResponseEntity run"+body.toString());
+        System.out.println("ResponseEntity run" + body.toString());
 
         return new ResponseEntity<Map<String, Object>>(result, status);
     }

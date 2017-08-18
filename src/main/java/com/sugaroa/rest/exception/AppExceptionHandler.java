@@ -34,7 +34,7 @@ public class AppExceptionHandler {
         return new ResponseEntity<Result>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AppException.class)
+    @ExceptionHandler({AppException.class})
     @ResponseBody
     public Result AppExceptionHandler(AppException e) {
         return new Result(-1, e.getMessage());
