@@ -34,6 +34,7 @@ dependencies {
 	//compile('org.springframework.boot:spring-boot-starter-validation')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.auth0:java-jwt:3.2.0')
+	compile("org.springframework.boot:spring-boot-devtools")
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	runtime('mysql:mysql-connector-java')

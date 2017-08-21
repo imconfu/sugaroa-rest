@@ -1,5 +1,7 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,8 +12,11 @@ public class User {
     private int id;
 
     private String account;
+    @JsonIgnore
     private String password;
     private String realname;
+
+    @JsonIgnore
     private String salt;
 
     @Column(name = "purview_array")

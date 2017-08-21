@@ -1,13 +1,16 @@
 package com.sugaroa.rest.domain;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "oa_menu")
 public class Menu {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    private Integer pid;
 
     @Column(nullable = false, name = "title")
     private String text;
@@ -15,7 +18,23 @@ public class Menu {
     @Column(name = "relation_array")
     private String relation;
 
-    public long getId() {
+    private int status;
+
+    private int deleted;
+
+    @Transient
+    private List<Menu> children;
+
+    public void setChildren(List<Menu> children) {
+        this.children = children;
+    }
+
+    public List<Menu> getChildren() {
+        return children;
+    }
+
+
+    public int getId() {
         return id;
     }
 
@@ -24,7 +43,7 @@ public class Menu {
     }
 
     public String getText() {
-        return (text + "后缀");
+        return text;
     }
 
     public void setText(String text) {
@@ -37,5 +56,29 @@ public class Menu {
 
     public void setRelation(String relation) {
         this.relation = relation;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(int deleted) {
+        this.deleted = deleted;
+    }
+
+    public Integer getPid() {
+        return pid;
+    }
+
+    public void setPid(Integer pid) {
+        this.pid = pid;
     }
 }

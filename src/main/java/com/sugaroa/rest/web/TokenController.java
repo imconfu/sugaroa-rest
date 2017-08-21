@@ -11,7 +11,6 @@ import com.sugaroa.rest.Result;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
-import org.json.JSONException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
