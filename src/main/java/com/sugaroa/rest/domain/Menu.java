@@ -17,6 +17,7 @@ public class Menu {
 
     @Column(name = "relation_array")
     private String relation;
+    private String href;
 
     private int status;
 
@@ -80,5 +81,13 @@ public class Menu {
 
     public void setPid(Integer pid) {
         this.pid = pid;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
     }
 }

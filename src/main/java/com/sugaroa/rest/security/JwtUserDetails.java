@@ -13,7 +13,7 @@ public class JwtUserDetails implements UserDetails {
 
     public JwtUserDetails(
             int id,
-            String userAccount, String account,
+            String account,
             String password,
             Collection<? extends GrantedAuthority> authorities
     ) {
@@ -21,6 +21,10 @@ public class JwtUserDetails implements UserDetails {
         this.account = account;
         this.password = password;
         this.authorities = authorities;
+    }
+
+    public Integer getId() {
+        return this.id;
     }
 
     @Override
