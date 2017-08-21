@@ -17,11 +17,6 @@ public class MenuService {
 
     public List<Menu> getUserMenu(int userId) {
         List<Menu> menus = repository.findByStatusAndDeleted(1, 0);
-        for (Menu menu : menus) {
-            System.out.print("location 1:" + menu.getId());
-            System.out.print("location 2:" + menu.getText());
-            System.out.print("location 3:" + menu.getStatus());
-        }
 
         List<Menu> nodeList = new ArrayList<Menu>();
         for (Menu node1 : menus) {

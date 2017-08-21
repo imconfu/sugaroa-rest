@@ -5,6 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.sugaroa.rest.domain.User;
+import com.sugaroa.rest.domain.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +29,7 @@ import java.util.Map;
 //TODO RequestHeaderAuthenticationFilter更合适？
 public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private UserService userService;
 
     @Value("Authorization")
     private String token;
@@ -51,7 +53,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if (SecurityContextHolder.getContext().getAuthentication() == null) {
                     String username = jwt.getClaim("account").asString();
-                    JwtUserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                    User userDetails = this.userService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(
@@ -60,10 +62,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
 
                     //保存用户信息到request中以便其它地方获取使用
-                    Map<String, Object> user = new HashMap<String, Object>();
-                    user.put("id",userDetails.getId());
-                    user.put("account",userDetails.getUsername());
-                    request.setAttribute("user", user);
+                    request.setAttribute("user", userDetails);
                 }
             } catch (SignatureVerificationException exception) {
                 //Invalid signature/claims
