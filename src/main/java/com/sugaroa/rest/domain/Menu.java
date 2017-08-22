@@ -1,7 +1,15 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "oa_menu")
@@ -17,6 +25,10 @@ public class Menu {
 
     @Column(name = "relation_array")
     private String relation;
+
+    @Column(name = "purview_object")
+    private String objectPurview;
+
     private String href;
 
     private int status;
@@ -89,5 +101,18 @@ public class Menu {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    public Map<String, Integer> getObjectPurview() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(objectPurview, Map.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public void setObjectPurview(String objectPurview) {
+        this.objectPurview = objectPurview;
     }
 }

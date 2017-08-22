@@ -1,11 +1,21 @@
 package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "oa_user")
@@ -92,6 +102,15 @@ public class User implements UserDetails {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public Map<String, Integer> getPurview() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(purview, Map.class);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override
