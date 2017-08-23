@@ -6,8 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 //import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.oracle.tools.packager.Log;
-import com.sugaroa.rest.Result;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
@@ -40,7 +38,7 @@ public class TokenController {
      */
     @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
-    Result grant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
+    String grant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         userRepository.testAA();
         User user = userRepository.findByAccount(account);
         if (user == null) throw new AppException("用户不存在");
@@ -66,13 +64,11 @@ public class TokenController {
                 .withClaim("id", user.getId())
                 .withClaim("account", account)
                 .sign(algorithm);
-        return new Result("token", token);
+        return token;
     }
 
     @RequestMapping("/token/verify")
     String verify(@RequestHeader("Token") String Token) {
-        //        JSONObject result = new JSONObject();
-        //result.put("token", token);
 
         String result = "";
         try {

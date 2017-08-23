@@ -1,19 +1,18 @@
 package com.sugaroa.rest.domain;
 
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class AuthorityService {
-    private final AuthorityRepository repository;
+public class PrivilegeService {
+
+    private final PrivilegeRepository repository;
 
     @Autowired
-    public AuthorityService(AuthorityRepository repository) {
+    public PrivilegeService(PrivilegeRepository repository) {
         this.repository = repository;
     }
 
@@ -22,17 +21,17 @@ public class AuthorityService {
      *
      * @return
      */
-    public List<Authority> getTree() {
-        List<Authority> Authorities = repository.findByDeleted(0);
+    public List<Privilege> getTree() {
+        List<Privilege> Authorities = repository.findByDeleted(0);
 
-        List<Authority> tree = new ArrayList<Authority>();
-        for (Authority node1 : Authorities) {
+        List<Privilege> tree = new ArrayList<Privilege>();
+        for (Privilege node1 : Authorities) {
             boolean mark = false;
-            for (Authority node2 : Authorities) {
+            for (Privilege node2 : Authorities) {
                 if (node1.getPid() != null && node1.getPid() == node2.getId()) {
                     mark = true;
                     if (node2.getChildren() == null)
-                        node2.setChildren(new ArrayList<Authority>());
+                        node2.setChildren(new ArrayList<Privilege>());
                     node2.getChildren().add(node1);
                     break;
                 }
@@ -42,5 +41,9 @@ public class AuthorityService {
             }
         }
         return tree;
+    }
+
+    public Privilege findById(Integer id) {
+        return repository.findOne(id);
     }
 }

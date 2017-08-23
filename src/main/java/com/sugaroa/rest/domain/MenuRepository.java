@@ -11,7 +11,7 @@ import java.util.List;
 @RepositoryRestResource(path = "menu")
 public interface MenuRepository extends JpaRepository<Menu, Integer>, JpaSpecificationExecutor<Menu> {
     @RestResource(path = "text", rel = "text")
-    Authority findByText(@Param("text") String text);
+    Privilege findByText(@Param("text") String text);
 
     List<Menu> findByStatusAndDeleted(@Param("status") int status, @Param("deleted") int deleted);
 

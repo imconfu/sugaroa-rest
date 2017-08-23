@@ -1,12 +1,17 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "oa_authority")
-public class Authority {
+@Table(name = "oa_privilege")
+public class Privilege {
     @Id
     @GeneratedValue
     private Integer id;
@@ -18,9 +23,9 @@ public class Authority {
     @Column(nullable = false, name = "title")
     private String text;
 
-    private String code;
+    private String resource;
 
-    private int mode;
+    private int operator;
 
     @Column(name = "relation_array")
     private String relation;
@@ -44,7 +49,7 @@ public class Authority {
     private int deleted;
 
     @Transient
-    private List<Authority> children;
+    private List<Privilege> children;
 
     public Integer getId() {
         return id;
@@ -78,24 +83,32 @@ public class Authority {
         this.text = text;
     }
 
-    public String getCode() {
-        return code;
+    public String getResource() {
+        return resource;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setResource(String resource) {
+        this.resource = resource;
     }
 
-    public int getMode() {
-        return mode;
+    public int getOperator() {
+        return operator;
     }
 
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setOperator(int operator) {
+        this.operator = operator;
     }
+    public List<Integer> getRelation() {
 
-    public String getRelation() {
-        return relation;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(relation, List.class);
+        } catch (NullPointerException e) {
+            //relation值为空时
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public void setRelation(String relation) {
@@ -158,11 +171,11 @@ public class Authority {
         this.deleted = deleted;
     }
 
-    public List<Authority> getChildren() {
+    public List<Privilege> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Authority> children) {
+    public void setChildren(List<Privilege> children) {
         this.children = children;
     }
 }
