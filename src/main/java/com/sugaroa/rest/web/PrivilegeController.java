@@ -2,6 +2,7 @@ package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Privilege;
 import com.sugaroa.rest.domain.PrivilegeService;
+import com.sugaroa.rest.SimpleTree;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +22,11 @@ public class PrivilegeController {
     @RequestMapping("/privileges")
     List<Privilege> getTree() {
         return service.getTree();
+    }
+
+    @RequestMapping("/privileges/combotree")
+    List<SimpleTree> getComboTree() {
+        return service.getComboTree();
     }
 
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.GET)

@@ -41,6 +41,8 @@ public class AppErrorController extends BasicErrorController {
 
         if (body.containsKey("exception")) {
             Object exception = body.get("exception");
+            result.put("exception", exception);
+            result.put("message", body.get("message"));
 
             if (exception.equals(SignatureVerificationException.class.getName())) {
                 result.put("code", -100);
@@ -66,6 +68,6 @@ public class AppErrorController extends BasicErrorController {
 
         System.out.println("ResponseEntity run" + body.toString());
 
-        return new ResponseEntity<Map<String, Object>>(body, status);
+        return new ResponseEntity<Map<String, Object>>(result, status);
     }
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 //@EnableAutoConfiguration
@@ -38,7 +40,7 @@ public class TokenController {
      */
     @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
-    String grant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
+    Map<String, Object> grant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         userRepository.testAA();
         User user = userRepository.findByAccount(account);
         if (user == null) throw new AppException("用户不存在");
@@ -64,7 +66,9 @@ public class TokenController {
                 .withClaim("id", user.getId())
                 .withClaim("account", account)
                 .sign(algorithm);
-        return token;
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("token", token);
+        return result;
     }
 
     @RequestMapping("/token/verify")

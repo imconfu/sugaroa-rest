@@ -1,6 +1,7 @@
 package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "oa_privilege")
+//@JsonInclude(JsonInclude.Include.NON_NULL)    //null值不返回
 public class Privilege {
     @Id
     @GeneratedValue
