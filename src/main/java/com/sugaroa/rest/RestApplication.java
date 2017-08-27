@@ -13,7 +13,10 @@ public class RestApplication {
 	}
 
     /**
-     * 控制器中@Validated用，好像没起作用
+     * 要控制器中使用@Validated用，必须在这里注入！！
+     * 对于传入的request参数可校验，即：
+     * 1、request有传参数，值不合法时抛出ConstraintViolationException，
+     * 2、request没有传参数，有定义@RequestParam且required = true时，优先抛出MissingServletRequestParameterException
      * @return
      */
 	@Bean

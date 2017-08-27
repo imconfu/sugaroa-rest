@@ -6,15 +6,18 @@ import com.sugaroa.rest.SimpleTree;
 import org.hibernate.EmptyInterceptor;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@Validated
 public class PrivilegeController {
 
     private PrivilegeService service;
@@ -67,8 +70,11 @@ public class PrivilegeController {
      * @return
      */
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.POST)
-    public Privilege updateOne(@PathVariable Integer id, HttpServletRequest request) {
-//        Map<String, Object> params = new HashMap<String, Object>();
+    public Privilege updateOne(@Min(value = 2,message = "age必须大于2") @PathVariable Integer id, HttpServletRequest request) {
+
+        //service.update(id, request.getParameterMap());
+
+        //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("id", id);
 //        if(request.getParameter(""))
         //request.getParameterMap().containsKey()
@@ -77,7 +83,6 @@ public class PrivilegeController {
          * 有值入的值不管是不是为空，都更新，没传的不更新
          * dynamicUpdate还没试出来。。。？？？？
          */
-        service.update(id, request.getParameterMap());
 
         System.out.println(request.getParameterMap().size());
         Privilege p = new Privilege();

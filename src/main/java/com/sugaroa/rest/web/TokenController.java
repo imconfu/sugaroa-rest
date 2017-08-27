@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +44,7 @@ public class TokenController {
      */
     @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
-    Map<String, Object> grant(@RequestParam @NotNull(message = "帐号不能为空") String account, @RequestParam String password) throws UnsupportedEncodingException {
+    Map<String, Object> grant(@NotBlank(message = "帐号不能为空") @RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         userRepository.testAA();
         User user = userRepository.findByAccount(account);
         if (user == null) throw new AppException("用户不存在");
