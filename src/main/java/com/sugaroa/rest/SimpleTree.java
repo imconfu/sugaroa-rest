@@ -3,7 +3,7 @@ package com.sugaroa.rest;
 import java.util.List;
 
 public class SimpleTree {
-    private int id;
+    private Integer id;
 
     private Integer pid;
 
@@ -11,14 +11,14 @@ public class SimpleTree {
 
     private List<SimpleTree> children;
 
-    public SimpleTree(int id, Integer pid, String text) {
+    public SimpleTree(Integer id, Integer pid, String text) {
         super();
         this.id = id;
         this.pid = pid;
         this.text = text;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

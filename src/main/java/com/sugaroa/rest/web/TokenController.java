@@ -14,14 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Validated
 //@EnableAutoConfiguration
 public class TokenController {
     private UserRepository userRepository;
@@ -40,7 +43,7 @@ public class TokenController {
      */
     @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
-    Map<String, Object> grant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
+    Map<String, Object> grant(@RequestParam @NotNull(message = "帐号不能为空") String account, @RequestParam String password) throws UnsupportedEncodingException {
         userRepository.testAA();
         User user = userRepository.findByAccount(account);
         if (user == null) throw new AppException("用户不存在");

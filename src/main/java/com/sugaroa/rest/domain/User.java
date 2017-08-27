@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.hibernate.annotations.DynamicUpdate;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,16 +15,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 @Table(name = "oa_user")
+//@DynamicUpdate
+@org.hibernate.annotations.Entity(dynamicUpdate =true)
 public class User implements UserDetails {
     @Id
     @GeneratedValue
     private int id;
 
+    @Column(updatable = false)
     private String account;
 
     @JsonIgnore
@@ -41,6 +46,10 @@ public class User implements UserDetails {
 
     @Column(name = "purview_object")
     private String purview;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
+    private Date createTime;
 
     private int deleted;
 
@@ -108,9 +117,16 @@ public class User implements UserDetails {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(purview, Map.class);
+        } catch (NullPointerException e) {
+            //relation值为空时
+            return null;
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public void setPurview(String purview) {
+        this.purview = purview;
     }
 
     @Override
@@ -132,4 +148,14 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+
 }

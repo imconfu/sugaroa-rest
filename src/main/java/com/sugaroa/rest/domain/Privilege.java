@@ -1,17 +1,21 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "oa_privilege")
+//@org.hibernate.annotations.Entity(dynamicUpdate =true)
 //@JsonInclude(JsonInclude.Include.NON_NULL)    //null值不返回
 public class Privilege {
     @Id
@@ -23,6 +27,7 @@ public class Privilege {
     private String path;
 
     @Column(nullable = false, name = "title")
+    @NotNull(message = "名称不能为空")
     private String text;
 
     private String resource;
@@ -40,6 +45,7 @@ public class Privilege {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time",columnDefinition="timestamp default CURRENT_TIMESTAMP")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
