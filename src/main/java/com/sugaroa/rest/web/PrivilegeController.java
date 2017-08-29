@@ -58,9 +58,10 @@ public class PrivilegeController {
     }
 
     @RequestMapping(value = "/privileges", method = RequestMethod.POST)
-    public Privilege insertOne() {
-        System.out.println("getOne");
-        return null;
+    public Privilege insertOne(HttpServletRequest request) {
+        System.out.println("insertOne");
+        System.out.println(request.getParameterMap());
+        return service.save(request.getParameterMap());
     }
 
     /**
@@ -72,7 +73,8 @@ public class PrivilegeController {
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.POST)
     public Privilege updateOne(@Min(value = 2,message = "age必须大于2") @PathVariable Integer id, HttpServletRequest request) {
 
-        //service.update(id, request.getParameterMap());
+        System.out.println("updateOne");
+        return service.save(id, request.getParameterMap());
 
         //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("id", id);
@@ -84,15 +86,15 @@ public class PrivilegeController {
          * dynamicUpdate还没试出来。。。？？？？
          */
 
-        System.out.println(request.getParameterMap().size());
-        Privilege p = new Privilege();
-        BeanWrapper bw = new BeanWrapperImpl(p);
-        System.out.println(p.getText());
-        System.out.println(p.getPid());
-        bw.setPropertyValue("text", "abc");
-        bw.setPropertyValue("pid", "2131");
-        System.out.println(p.getText());
-        System.out.println(p.getPid());
-        return service.findById(id);
+//        System.out.println(request.getParameterMap().size());
+//        Privilege p = new Privilege();
+//        BeanWrapper bw = new BeanWrapperImpl(p);
+//        System.out.println(p.getText());
+//        System.out.println(p.getPid());
+//        bw.setPropertyValue("text", "abc");
+//        bw.setPropertyValue("pid", "2131");
+//        System.out.println(p.getText());
+//        System.out.println(p.getPid());
+//        return service.findById(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.sugaroa.rest.domain;
 
+import com.sugaroa.rest.exception.AppException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ public class PrivilegeService {
     /**
      * 创建
      */
-    public void create() {
-        Privilege entity = new Privilege();
-        repository.save(entity);
+    public Privilege save(Map<String, String[]> params) {
+        Privilege privilege = new Privilege();
+        return this.save(privilege, params);
     }
 
     /**
@@ -35,9 +36,15 @@ public class PrivilegeService {
      * @param id
      * @param params
      */
-    public void update(Integer id, Map<String, String[]> params) {
+    public Privilege save(Integer id, Map<String, String[]> params) {
+
         //先查找对应记录
         Privilege privilege = repository.findOne(id);
+        return this.save(privilege, params);
+
+    }
+
+    public Privilege save(Privilege privilege, Map<String, String[]> params) {
 
         //初始化BeanWrapper
         BeanWrapper bw = new BeanWrapperImpl(privilege);
@@ -47,10 +54,52 @@ public class PrivilegeService {
             //只要有传参数进来，就认为修改该属性
             bw.setPropertyValue(entry.getKey(), entry.getValue());
         }
+        //把实体类的值填充了，才能再做下一步处理。
 
-        //TODO 对一些值做预处理，如改变了pid则对应改变path值
+        //同pid下重名判断及path处理
+        if (params.containsKey("pid")) {
+            //判断同ID下text是否有重复
+            int count = 0;
+            if (privilege.getId() == null) {
+                // 创建时
+                count = repository.countByPidAndText(privilege.getPid(), privilege.getText());
+            } else {
+                // 修改时
+                count = repository.countByPidAndTextAndIdNot(privilege.getPid(), privilege.getText(), privilege.getId());
+            }
 
-        repository.save(privilege);
+            if (count > 0) {
+                String message = "分组名称重复";
+                // TODO 可以细化提示信息：资源/操作
+                throw new AppException("权限名称重复");
+            }
+
+            //获取path
+            if (privilege.getPid() > 1) {
+                Privilege parentPrivilege = repository.findOne(privilege.getPid());
+                privilege.setPath(parentPrivilege.getPath() + "," + privilege.getPid());
+            } else {
+                privilege.setPath("1");
+            }
+        }
+
+        //有设置resource的值处理operator值，只有新增加时才有效
+        if (privilege.getId() == null) {
+            if (params.containsKey("resource")) {
+                //获取该resource下最后一条数据，获取operator值，进而生成下一个operator值
+                Privilege lastPrivilege = repository.findTopByResourceOrderByIdDesc(privilege.getResource());
+                if (lastPrivilege == null) {
+                    privilege.setOperator(2147483647);
+                } else {
+                    int operator = lastPrivilege.getOperator();
+                    privilege.setOperator((operator == 2147483647 ? 1 : operator * 2));
+                }
+            } else {
+                privilege.setOperator(0);
+            }
+        }
+
+        return repository.save(privilege);
     }
 
     /**

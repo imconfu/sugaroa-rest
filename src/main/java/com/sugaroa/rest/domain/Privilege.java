@@ -24,6 +24,7 @@ public class Privilege {
 
     private Integer pid;
 
+    @NotNull(message = "Path不能为空")
     private String path;
 
     @Column(nullable = false, name = "title")
@@ -41,15 +42,16 @@ public class Privilege {
 
     private int sort;
 
-    private String desc;
+    private String remark;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time",columnDefinition="timestamp default CURRENT_TIMESTAMP")
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_time",columnDefinition="timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     private int status;
@@ -106,6 +108,7 @@ public class Privilege {
     public void setOperator(int operator) {
         this.operator = operator;
     }
+
     public List<Integer> getRelation() {
 
         try {
@@ -120,7 +123,7 @@ public class Privilege {
     }
 
     public void setRelation(String relation) {
-        this.relation = relation;
+        this.relation = "[" + relation + "]";
     }
 
     public String getAction() {
@@ -139,12 +142,12 @@ public class Privilege {
         this.sort = sort;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Date getCreateTime() {

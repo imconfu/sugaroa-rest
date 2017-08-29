@@ -26,10 +26,10 @@ public class AppExceptionHandler {
 
     public AppExceptionHandler() {
         result = new HashMap<String, Object>();
-        result.put("success", false);
-        result.put("code", -1);
-        result.put("message", "用户信息");
-        result.put("exception", "开发者信息");
+        result.put("code", 0);
+        result.put("error", "System Exception");
+        result.put("message", "错误信息");
+        result.put("exception", "异常原因");
     }
 
     /**

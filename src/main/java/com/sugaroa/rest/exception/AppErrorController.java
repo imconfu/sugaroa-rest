@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,13 +37,14 @@ public class AppErrorController extends BasicErrorController {
 
         //使用自定义返回格式
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("success", false);
-        result.put("exception", "开发者信息");
+        result.put("error", body.get("error"));
+        result.put("message", body.get("message"));
+        result.put("exception", "异常原因");
+        result.put("code", 0);
 
         if (body.containsKey("exception")) {
             Object exception = body.get("exception");
             result.put("exception", exception);
-            result.put("message", body.get("message"));
 
             if (exception.equals(SignatureVerificationException.class.getName())) {
                 result.put("code", -100);
@@ -57,6 +59,11 @@ public class AppErrorController extends BasicErrorController {
             if (exception.equals(HttpMessageNotWritableException.class.getName())) {
                 result.put("code", -102);
                 result.put("message", "HTTP Message No Writable");
+            }
+
+            if (exception.equals(ConstraintViolationException.class.getName())) {
+                result.put("code", -102);
+                result.put("message", "数据校验失败");
             }
 
         }
