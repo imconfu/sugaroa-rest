@@ -1,5 +1,7 @@
-package com.sugaroa.rest.domain;
+package com.sugaroa.rest.service;
 
+import com.sugaroa.rest.domain.Privilege;
+import com.sugaroa.rest.domain.PrivilegeRepository;
 import com.sugaroa.rest.exception.AppException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -129,7 +131,7 @@ public class PrivilegeService {
         return tree;
     }
 
-    public Privilege findById(Integer id) {
+    public Privilege get(Integer id) {
         return repository.findOne(id);
     }
 
@@ -166,7 +168,7 @@ public class PrivilegeService {
      *
      * @return
      */
-    public Map<Integer, String> getKeyValuePairs() {
+    public Map<Integer, String> getPairs() {
         Map<Integer, String> result = new HashMap<Integer, String>();
 
         List<SimpleTree> Privileges = repository.findByStatusAndDeleted(1, 0);

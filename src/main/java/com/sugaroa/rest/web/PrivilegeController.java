@@ -1,18 +1,13 @@
 package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Privilege;
-import com.sugaroa.rest.domain.PrivilegeService;
+import com.sugaroa.rest.service.PrivilegeService;
 import com.sugaroa.rest.SimpleTree;
-import org.hibernate.EmptyInterceptor;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,21 +41,20 @@ public class PrivilegeController {
      *
      * @return
      */
-    @RequestMapping("/privileges/keyvaluepairs")
-    Map<Integer, String> getKeyValuePairs() {
-        return service.getKeyValuePairs();
+    @RequestMapping("/privileges/pairs")
+    Map<Integer, String> getPairs() {
+        return service.getPairs();
     }
 
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.GET)
-    public Privilege getOne(@PathVariable Integer id) {
+    public Privilege get(@PathVariable Integer id) {
         System.out.println("getOne");
-        return service.findById(id);
+        return service.get(id);
     }
 
     @RequestMapping(value = "/privileges", method = RequestMethod.POST)
-    public Privilege insertOne(HttpServletRequest request) {
+    public Privilege create(HttpServletRequest request) {
         System.out.println("insertOne");
-        System.out.println(request.getParameterMap());
         return service.save(request.getParameterMap());
     }
 
@@ -71,30 +65,9 @@ public class PrivilegeController {
      * @return
      */
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.POST)
-    public Privilege updateOne(@Min(value = 2,message = "age必须大于2") @PathVariable Integer id, HttpServletRequest request) {
+    public Privilege update(@Min(value = 2,message = "age必须大于2") @PathVariable Integer id, HttpServletRequest request) {
 
         System.out.println("updateOne");
         return service.save(id, request.getParameterMap());
-
-        //        Map<String, Object> params = new HashMap<String, Object>();
-//        params.put("id", id);
-//        if(request.getParameter(""))
-        //request.getParameterMap().containsKey()
-        /**
-         * 使用BeanWrapper动态调用 setter 方法赋值,还可以自动转换类型！！！
-         * 有值入的值不管是不是为空，都更新，没传的不更新
-         * dynamicUpdate还没试出来。。。？？？？
-         */
-
-//        System.out.println(request.getParameterMap().size());
-//        Privilege p = new Privilege();
-//        BeanWrapper bw = new BeanWrapperImpl(p);
-//        System.out.println(p.getText());
-//        System.out.println(p.getPid());
-//        bw.setPropertyValue("text", "abc");
-//        bw.setPropertyValue("pid", "2131");
-//        System.out.println(p.getText());
-//        System.out.println(p.getPid());
-//        return service.findById(id);
     }
 }

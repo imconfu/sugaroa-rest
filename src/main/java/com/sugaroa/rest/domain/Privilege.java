@@ -1,9 +1,6 @@
 package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -15,8 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "oa_privilege")
-//@org.hibernate.annotations.Entity(dynamicUpdate =true)
 //@JsonInclude(JsonInclude.Include.NON_NULL)    //null值不返回
+@DynamicUpdate
 public class Privilege {
     @Id
     @GeneratedValue

@@ -1,14 +1,8 @@
 package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicUpdate;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,12 +10,11 @@ import javax.persistence.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 @Table(name = "oa_user")
-//@DynamicUpdate
+@DynamicUpdate
 @org.hibernate.annotations.Entity(dynamicUpdate =true)
 public class User implements UserDetails {
     @Id

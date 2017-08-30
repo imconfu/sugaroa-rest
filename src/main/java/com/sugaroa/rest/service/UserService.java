@@ -1,5 +1,7 @@
-package com.sugaroa.rest.domain;
+package com.sugaroa.rest.service;
 
+import com.sugaroa.rest.domain.User;
+import com.sugaroa.rest.domain.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;

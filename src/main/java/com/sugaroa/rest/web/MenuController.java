@@ -1,7 +1,7 @@
 package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Menu;
-import com.sugaroa.rest.domain.MenuService;
+import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
 import org.json.JSONException;
 import org.springframework.security.access.prepost.PreAuthorize;

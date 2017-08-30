@@ -1,5 +1,7 @@
-package com.sugaroa.rest.domain;
+package com.sugaroa.rest.service;
 
+import com.sugaroa.rest.domain.Menu;
+import com.sugaroa.rest.domain.MenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
