@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
@@ -64,7 +65,7 @@ public class Menu {
     }
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -88,7 +89,7 @@ public class Menu {
         this.purviewArray = purviewArray;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
@@ -96,7 +97,7 @@ public class Menu {
         this.status = status;
     }
 
-    public int getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 

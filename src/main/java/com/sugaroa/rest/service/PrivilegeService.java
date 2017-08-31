@@ -110,13 +110,13 @@ public class PrivilegeService {
      * @return
      */
     public List<Privilege> getTree() {
-        List<Privilege> Authorities = repository.findByDeleted(0);
+        List<Privilege> privileges = repository.findByDeleted(0);
 
         List<Privilege> tree = new ArrayList<Privilege>();
-        for (Privilege node1 : Authorities) {
+        for (Privilege node1 : privileges) {
             boolean mark = false;
-            for (Privilege node2 : Authorities) {
-                if (node1.getPid() != null && node1.getPid() == node2.getId()) {
+            for (Privilege node2 : privileges) {
+                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Object>());

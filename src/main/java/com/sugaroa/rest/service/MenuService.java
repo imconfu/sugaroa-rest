@@ -52,7 +52,7 @@ public class MenuService {
         for (Menu node1 : menus) {
             boolean mark = false;
             for (Menu node2 : menus) {
-                if (node1.getPid() != null && node1.getPid() == node2.getId()) {
+                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Menu>());

@@ -1,13 +1,10 @@
 package com.sugaroa.rest.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -17,14 +14,12 @@ public class Privilege extends SimpleTree{
 
     private String resource;
 
-    private int operator;
+    private Integer operator;
 
     @Column(name = "relation_array")
     private String relation;
 
     private String action;
-
-    private int sort;
 
     private String remark;
 
@@ -44,7 +39,7 @@ public class Privilege extends SimpleTree{
         this.resource = resource;
     }
 
-    public int getOperator() {
+    public Integer getOperator() {
         return operator;
     }
 
@@ -75,14 +70,6 @@ public class Privilege extends SimpleTree{
 
     public void setAction(String action) {
         this.action = action;
-    }
-
-    public int getSort() {
-        return sort;
-    }
-
-    public void setSort(int sort) {
-        this.sort = sort;
     }
 
     public String getRemark() {

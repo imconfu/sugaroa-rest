@@ -38,6 +38,8 @@ public class SimpleTree {
 
     private Integer deleted;
 
+    private Integer sort;
+
     @Transient
     private List<Object> children;
 
@@ -122,4 +124,13 @@ public class SimpleTree {
     public void setChildren(List<Object> children) {
         this.children = children;
     }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
 }
