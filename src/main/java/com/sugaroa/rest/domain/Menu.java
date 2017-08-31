@@ -1,10 +1,13 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,25 +16,41 @@ import java.util.Map;
 @DynamicUpdate
 public class Menu {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @GeneratedValue
+    private Integer id;
 
     private Integer pid;
 
+    @NotNull(message = "Path不能为空")
+    private String path;
+
     @Column(nullable = false, name = "title")
+    @NotNull(message = "名称不能为空")
     private String text;
 
-    @Column(name = "relation_array")
-    private String relation;
+    private int sort;
+
+    @Column(name = "purview_array")
+    private String purviewArray;
 
     @Column(name = "purview_object")
-    private String objectPurview;
+    private String purviewObject;
 
     private String href;
 
     private int status;
 
     private int deleted;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
 
     @Transient
     private List<Menu> children;
@@ -61,12 +80,12 @@ public class Menu {
         this.text = text;
     }
 
-    public String getRelation() {
-        return relation;
+    public String getPurviewArray() {
+        return purviewArray;
     }
 
-    public void setRelation(String relation) {
-        this.relation = relation;
+    public void setPurviewArray(String purviewArray) {
+        this.purviewArray = purviewArray;
     }
 
     public int getStatus() {
@@ -101,16 +120,16 @@ public class Menu {
         this.href = href;
     }
 
-    public Map<String, Integer> getObjectPurview() {
+    public Map<String, Integer> getPurviewObject() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(objectPurview, Map.class);
+            return objectMapper.readValue(purviewObject, Map.class);
         } catch (IOException e) {
             return null;
         }
     }
 
-    public void setObjectPurview(String objectPurview) {
-        this.objectPurview = objectPurview;
+    public void setPurviewObject(String purviewObject) {
+        this.purviewObject = purviewObject;
     }
 }

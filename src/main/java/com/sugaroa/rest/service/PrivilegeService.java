@@ -7,7 +7,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.sugaroa.rest.SimpleTree;
+import com.sugaroa.rest.domain.SimpleTree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -119,7 +119,7 @@ public class PrivilegeService {
                 if (node1.getPid() != null && node1.getPid() == node2.getId()) {
                     mark = true;
                     if (node2.getChildren() == null)
-                        node2.setChildren(new ArrayList<Privilege>());
+                        node2.setChildren(new ArrayList<Object>());
                     node2.getChildren().add(node1);
                     break;
                 }
@@ -151,7 +151,7 @@ public class PrivilegeService {
                 if (node1.getPid() != null && node1.getPid() == node2.getId()) {
                     mark = true;
                     if (node2.getChildren() == null)
-                        node2.setChildren(new ArrayList<SimpleTree>());
+                        node2.setChildren(new ArrayList<Object>());
                     node2.getChildren().add(node1);
                     break;
                 }

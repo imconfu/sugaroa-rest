@@ -2,7 +2,7 @@ package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Privilege;
 import com.sugaroa.rest.service.PrivilegeService;
-import com.sugaroa.rest.SimpleTree;
+import com.sugaroa.rest.domain.SimpleTree;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

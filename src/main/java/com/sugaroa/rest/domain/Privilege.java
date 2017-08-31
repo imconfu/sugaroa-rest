@@ -12,21 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "oa_privilege")
-//@JsonInclude(JsonInclude.Include.NON_NULL)    //null值不返回
 @DynamicUpdate
-public class Privilege {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
-    private Integer pid;
-
-    @NotNull(message = "Path不能为空")
-    private String path;
-
-    @Column(nullable = false, name = "title")
-    @NotNull(message = "名称不能为空")
-    private String text;
+public class Privilege extends SimpleTree{
 
     private String resource;
 
@@ -41,53 +28,12 @@ public class Privilege {
 
     private String remark;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
-
-    private int status;
-
-    private int deleted;
-
-    @Transient
-    private List<Privilege> children;
-
-    public Integer getId() {
-        return id;
+    public Privilege() {
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Integer getPid() {
-        return pid;
-    }
-
-    public void setPid(Integer pid) {
-        this.pid = pid;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    public Privilege(Integer id, Integer pid, String text) {
+        super(id, pid, text);
     }
 
     public String getResource() {
@@ -145,45 +91,5 @@ public class Privilege {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public int getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(int deleted) {
-        this.deleted = deleted;
-    }
-
-    public List<Privilege> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<Privilege> children) {
-        this.children = children;
     }
 }

@@ -15,7 +15,6 @@ import java.util.Map;
 @Entity
 @Table(name = "oa_user")
 @DynamicUpdate
-@org.hibernate.annotations.Entity(dynamicUpdate =true)
 public class User implements UserDetails {
     @Id
     @GeneratedValue
