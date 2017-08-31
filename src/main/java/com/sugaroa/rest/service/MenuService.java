@@ -55,7 +55,7 @@ public class MenuService {
                 if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
-                        node2.setChildren(new ArrayList<Menu>());
+                        node2.setChildren(new ArrayList<Object>());
                     node2.getChildren().add(node1);
                     break;
                 }
