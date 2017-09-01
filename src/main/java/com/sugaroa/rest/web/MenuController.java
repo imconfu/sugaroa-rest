@@ -1,15 +1,18 @@
 package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Menu;
+import com.sugaroa.rest.domain.Privilege;
+import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
 import org.json.JSONException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -22,11 +25,40 @@ public class MenuController {
         this.service = service;
     }
 
-    @RequestMapping("/menu/getusermenu")
-    List<Menu> getUserMenu(@RequestAttribute("user") User user) throws JSONException {
-        System.out.println("Request中的用户信息");
-        System.out.println(user.getAccount());
+    @RequestMapping("/menus")
+    List<Menu> getTree() {
+        return service.getTree();
+    }
 
+    @RequestMapping(value = "/menus/{id}")
+    public Menu get(@PathVariable Integer id) {
+        return service.get(id);
+    }
+
+    @RequestMapping(value = "/menus", method = RequestMethod.POST)
+    public Menu create(HttpServletRequest request) {
+        return service.save(request.getParameterMap());
+    }
+
+    @RequestMapping(value = "/menus/{id}", method = RequestMethod.POST)
+    public Menu update(@Min(value = 1, message = "菜单ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
+        return service.save(id, request.getParameterMap());
+    }
+
+    @RequestMapping("/menus/combotree")
+    List<SimpleTree> getComboTree() {
+        return service.getComboTree();
+    }
+
+    @RequestMapping("/menus/pairs")
+    Map<Integer, String> getPairs() {
+        return service.getPairs();
+    }
+
+    @RequestMapping("/menus/getusermenu")
+    List<SimpleTree> getUserMenu(@RequestAttribute("user") User user) {
+        System.out.println("/menus/getusermenu");
         return service.getUserMenu(user.getId());
     }
+
 }

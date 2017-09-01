@@ -18,20 +18,27 @@ import java.util.Map;
 public class Menu extends SimpleTree{
 
     @Column(name = "purview_array")
-    private String purviewArray;
+    private String privilege;
 
     @Column(name = "purview_object")
-    private String purviewObject;
+    private String privilegeObject;
 
     private String href;
 
-
-    public String getPurviewArray() {
-        return purviewArray;
+    public Menu() {
     }
 
-    public void setPurviewArray(String purviewArray) {
-        this.purviewArray = purviewArray;
+    public Menu(Integer id, Integer pid, String text, String href) {
+        super(id, pid, text);
+        this.href = href;
+    }
+
+    public String getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(String privilege) {
+        this.privilege = privilege;
     }
 
     public String getHref() {
@@ -42,16 +49,19 @@ public class Menu extends SimpleTree{
         this.href = href;
     }
 
-    public Map<String, Integer> getPurviewObject() {
+    public Map<String, Integer> getPrivilegeObject() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(purviewObject, Map.class);
+            return objectMapper.readValue(privilegeObject, Map.class);
+        } catch (NullPointerException e) {
+            //relation值为空时
+            return null;
         } catch (IOException e) {
             return null;
         }
     }
 
-    public void setPurviewObject(String purviewObject) {
-        this.purviewObject = purviewObject;
+    public void setPrivilegeObject(String privilegeObject) {
+        this.privilegeObject = privilegeObject;
     }
 }

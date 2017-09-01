@@ -60,12 +60,13 @@ public class PrivilegeController {
 
     /**
      * 注意：@RequestBody使用时：Content-Type:application/json
+     *
      * @param id
      * @param request
      * @return
      */
     @RequestMapping(value = "/privileges/{id}", method = RequestMethod.POST)
-    public Privilege update(@Min(value = 2,message = "age必须大于2") @PathVariable Integer id, HttpServletRequest request) {
+    public Privilege update(@Min(value = 1, message = "权限ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
 
         System.out.println("updateOne");
         return service.save(id, request.getParameterMap());

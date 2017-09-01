@@ -10,7 +10,7 @@ public interface PrivilegeRepository extends JpaRepository<Privilege, Integer> {
     List<Privilege> findByDeleted(@Param("deleted") int deleted);
 
     //查询获取部分字段
-    @Query("select new com.sugaroa.rest.domain.SimpleTree(p.id,p.pid,p.text) from Privilege p where p.status=:status and p.deleted=:deleted")
+    @Query("select new Privilege(p.id,p.pid,p.text) from Privilege p where p.status=:status and p.deleted=:deleted")
     List<SimpleTree> findByStatusAndDeleted(@Param("status") int status, @Param("deleted") int deleted);
 
     Privilege findTopByResourceOrderByIdDesc(@Param("resource") String resource);

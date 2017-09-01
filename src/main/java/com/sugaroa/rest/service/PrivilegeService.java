@@ -142,13 +142,13 @@ public class PrivilegeService {
      */
     public List<SimpleTree> getComboTree() {
 
-        List<SimpleTree> Privileges = repository.findByStatusAndDeleted(1, 0);
+        List<SimpleTree> privileges = repository.findByStatusAndDeleted(1, 0);
 
         List<SimpleTree> tree = new ArrayList<SimpleTree>();
-        for (SimpleTree node1 : Privileges) {
+        for (SimpleTree node1 : privileges) {
             boolean mark = false;
-            for (SimpleTree node2 : Privileges) {
-                if (node1.getPid() != null && node1.getPid() == node2.getId()) {
+            for (SimpleTree node2 : privileges) {
+                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Object>());
