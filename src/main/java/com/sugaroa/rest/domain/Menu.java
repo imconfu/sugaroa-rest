@@ -18,7 +18,7 @@ import java.util.Map;
 public class Menu extends SimpleTree{
 
     @Column(name = "purview_array")
-    private String privilege;
+    private String privilegeArray;
 
     @Column(name = "purview_object")
     private String privilegeObject;
@@ -33,12 +33,12 @@ public class Menu extends SimpleTree{
         this.href = href;
     }
 
-    public String getPrivilege() {
-        return privilege;
+    public String getPrivilegeArray() {
+        return privilegeArray;
     }
 
-    public void setPrivilege(String privilege) {
-        this.privilege = privilege;
+    public void setPrivilegeArray(String privilegeArray) {
+        this.privilegeArray = privilegeArray;
     }
 
     public String getHref() {

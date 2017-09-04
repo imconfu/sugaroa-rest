@@ -5,6 +5,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -62,6 +63,7 @@ public class Privilege extends SimpleTree{
 
     public void setRelation(String relation) {
         this.relation = "[" + relation + "]";
+        //Arrays.asList(relation);
     }
 
     public String getAction() {

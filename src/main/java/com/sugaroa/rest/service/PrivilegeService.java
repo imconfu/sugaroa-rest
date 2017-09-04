@@ -9,13 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sugaroa.rest.domain.SimpleTree;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PrivilegeService {
+    public static final int MAX_OPERATOR = 2147483647;
+    public static final String ALL_RESOURCE = "ALL";
 
     private final PrivilegeRepository repository;
 
@@ -91,10 +90,10 @@ public class PrivilegeService {
                 //获取该resource下最后一条数据，获取operator值，进而生成下一个operator值
                 Privilege lastPrivilege = repository.findTopByResourceOrderByIdDesc(privilege.getResource());
                 if (lastPrivilege == null) {
-                    privilege.setOperator(2147483647);
+                    privilege.setOperator(MAX_OPERATOR);
                 } else {
                     int operator = lastPrivilege.getOperator();
-                    privilege.setOperator((operator == 2147483647 ? 1 : operator * 2));
+                    privilege.setOperator((operator == MAX_OPERATOR ? 1 : operator * 2));
                 }
             } else {
                 privilege.setOperator(0);
@@ -171,10 +170,77 @@ public class PrivilegeService {
     public Map<Integer, String> getPairs() {
         Map<Integer, String> result = new HashMap<Integer, String>();
 
-        List<SimpleTree> Privileges = repository.findByStatusAndDeleted(1, 0);
-        for (SimpleTree privilege : Privileges) {
+        List<SimpleTree> privileges = repository.findByStatusAndDeleted(1, 0);
+        for (SimpleTree privilege : privileges) {
             result.put(privilege.getId(), privilege.getText());
         }
         return result;
+    }
+
+    /**
+     * 根据origin权限解析关联权限，生成最终权限list和object
+     *
+     * @param origin
+     * @param object
+     * @param list
+     */
+    public void parse(Set<Integer> origin, Map<String, Integer> object, Set<Integer> list) {
+        System.out.println("PrivilegeService.parse Run！");
+        // 首次进入判断是否拥有所有权限
+        if (object.size() == 0 && list.size() == 0) {
+            Integer all = new Integer(1);
+            if (origin.contains(all)) {
+                list.add(all);
+                object.put(ALL_RESOURCE, MAX_OPERATOR);
+                System.out.println("PrivilegeService.parse 拥有所有权限！");
+                return;
+            }
+        }
+        Set<Integer> relation = new HashSet<Integer>();
+        List<Privilege> privileges = repository.findByIdInAndStatusAndDeleted(origin, 1, 0);
+
+        for (Privilege privilege : privileges) {
+            String resource = privilege.getResource();
+            Integer operator = privilege.getOperator();
+
+            if (resource.isEmpty()) continue;
+
+            list.add(privilege.getId());
+            if (!object.containsKey(resource)) {
+                //resource没有在object中，则先初始化
+                object.put(resource, 0);
+            }
+            if (operator == MAX_OPERATOR) {
+                object.put(resource, MAX_OPERATOR);
+            }
+            // TODO 可能会有问题 Integer运算
+            if (operator > 0 && operator < MAX_OPERATOR && (operator & object.get(resource)) == 0) {
+                object.put(resource, object.get(resource) + operator);
+            }
+
+            List<Integer> currRelation = privilege.getRelation();
+            if (currRelation != null) {
+                //合并
+                relation.addAll(currRelation);
+            }
+        }
+
+        System.out.println("relation");
+        for (Integer id : relation) {
+            System.out.print(id+",");
+        }
+        System.out.println("");
+
+        //找出不在最终权限列表list中的关联权限,即差集
+        Set<Integer> recursion = new HashSet<Integer>();
+        recursion.addAll(relation);
+        recursion.removeAll(list);
+
+        //将relaction合并到list中
+        list.addAll(relation);
+
+        if (recursion.size() > 0) {
+            parse(recursion, object, list);
+        }
     }
 }

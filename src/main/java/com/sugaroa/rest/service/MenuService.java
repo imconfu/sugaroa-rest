@@ -8,18 +8,17 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MenuService {
     private final MenuRepository repository;
+    private final PrivilegeService servicePrivilege;
 
     @Autowired
-    public MenuService(MenuRepository repository) {
+    public MenuService(MenuRepository repository, PrivilegeService servicePrivilege) {
         this.repository = repository;
+        this.servicePrivilege = servicePrivilege;
     }
 
 
@@ -84,7 +83,7 @@ public class MenuService {
 
     boolean checkUserMenuPurview(Map<String, Integer> userPurview, Map<String, Integer> menuPurview) {
         // 用户拥有所有权限
-        if (userPurview.getOrDefault("ALL", 0).equals(2147483647)) {
+        if (userPurview.getOrDefault(PrivilegeService.ALL_RESOURCE, 0).equals(PrivilegeService.MAX_OPERATOR)) {
             return true;
         }
 
@@ -204,7 +203,35 @@ public class MenuService {
                 menu.setPath("1");
             }
         }
+        //有设置关联权限
+        if (params.containsKey("privilegeArray")) {
+            String[] privilegeArray = menu.getPrivilegeArray().split(",");
+            Set<Integer> privilegeList = new HashSet<Integer>();
+            for (String id : privilegeArray) {
+                privilegeList.add(Integer.valueOf(id));
+            }
+            Map<String, Integer> object = new HashMap<String, Integer>();
+            Set<Integer> list = new HashSet<Integer>();
 
+            System.out.println("privilegeList");
+            for (Integer id : privilegeList) {
+                System.out.print(id+",");
+            }
+            System.out.println("");
+            servicePrivilege.parse(privilegeList, object, list);
+            //测试结果
+            System.out.println("object");
+            for (Map.Entry<String, Integer> o : object.entrySet()) {
+                System.out.print(o.getKey() + ":" + o.getValue()+", ");
+            }
+            System.out.println("");
+            System.out.println("list");
+            for (Integer id1 : list) {
+                System.out.print(id1+",");
+            }
+            System.out.println("");
+            return null;
+        }
         return repository.save(menu);
     }
 }

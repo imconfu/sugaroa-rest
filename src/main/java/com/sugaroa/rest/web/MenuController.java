@@ -1,11 +1,9 @@
 package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Menu;
-import com.sugaroa.rest.domain.Privilege;
 import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
-import org.json.JSONException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
