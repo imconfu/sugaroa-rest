@@ -1,17 +1,20 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "oa_privilege")
 @DynamicUpdate
-public class Privilege extends SimpleTree{
+public class Privilege extends SimpleTree {
 
     private String resource;
 
@@ -49,21 +52,40 @@ public class Privilege extends SimpleTree{
     }
 
     public List<Integer> getRelation() {
+        if (relation == null || relation.isEmpty())
+            return null;
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(relation, List.class);
-        } catch (NullPointerException e) {
-            //relation值为空时
-            return null;
         } catch (IOException e) {
             return null;
         }
     }
 
     public void setRelation(String relation) {
-        this.relation = "[" + relation + "]";
-        //Arrays.asList(relation);
+        if (relation == null || relation.isEmpty()) {
+            this.relation = null;
+            return;
+        }
+
+        String[] array = relation.split(",");
+        Set<Integer> relationSet = new HashSet<Integer>();
+        for (String id : array) {
+            relationSet.add(Integer.valueOf(id));
+        }
+
+        if (relationSet.size() == 0){
+            this.relation = null;
+            return;
+        }
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            this.relation = mapper.writeValueAsString(relationSet);
+        } catch (JsonProcessingException e) {
+            this.relation = null;
+        }
     }
 
     public String getAction() {

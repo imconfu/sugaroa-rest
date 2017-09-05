@@ -204,33 +204,23 @@ public class MenuService {
             }
         }
         //有设置关联权限
-        if (params.containsKey("privilegeArray")) {
-            String[] privilegeArray = menu.getPrivilegeArray().split(",");
+        if (params.containsKey("privileges")) {
             Set<Integer> privilegeList = new HashSet<Integer>();
-            for (String id : privilegeArray) {
-                privilegeList.add(Integer.valueOf(id));
-            }
             Map<String, Integer> object = new HashMap<String, Integer>();
             Set<Integer> list = new HashSet<Integer>();
 
-            System.out.println("privilegeList");
-            for (Integer id : privilegeList) {
-                System.out.print(id+",");
+            //privileges格式不对会抛出java.lang.NumberFormatException
+            String[] privilegeArray = menu.getPrivileges().split(",");
+            if (!menu.getPrivileges().isEmpty() && privilegeArray.length > 0) {
+                for (String id : privilegeArray) {
+                    privilegeList.add(Integer.valueOf(id));
+                }
+                servicePrivilege.parse(privilegeList, object, list);
             }
-            System.out.println("");
-            servicePrivilege.parse(privilegeList, object, list);
-            //测试结果
-            System.out.println("object");
-            for (Map.Entry<String, Integer> o : object.entrySet()) {
-                System.out.print(o.getKey() + ":" + o.getValue()+", ");
-            }
-            System.out.println("");
-            System.out.println("list");
-            for (Integer id1 : list) {
-                System.out.print(id1+",");
-            }
-            System.out.println("");
-            return null;
+
+            //不能判断不为空才处理，可能就是要赋为空
+            menu.setPrivilegeArray(list);
+            menu.setPrivilegeObject(object);
         }
         return repository.save(menu);
     }
