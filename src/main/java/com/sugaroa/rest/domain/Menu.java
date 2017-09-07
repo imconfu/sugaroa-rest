@@ -1,17 +1,12 @@
 package com.sugaroa.rest.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,9 +31,10 @@ public class Menu extends SimpleTree {
     public Menu() {
     }
 
-    public Menu(Integer id, Integer pid, String text, String href) {
+    public Menu(Integer id, Integer pid, String text, String href, String privilegeArray) {
         super(id, pid, text);
         this.href = href;
+        this.privilegeArray = privilegeArray;
     }
 
     public String getHref() {
@@ -58,6 +54,8 @@ public class Menu extends SimpleTree {
     }
 
     public Set<Integer> getPrivilegeArray() {
+        System.out.println("menu privilegeArray");
+        System.out.println(privilegeArray);
         if (privilegeArray == null || privilegeArray.isEmpty())
             return null;
 

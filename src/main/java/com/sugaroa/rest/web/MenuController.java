@@ -53,10 +53,10 @@ public class MenuController {
         return service.getPairs();
     }
 
-    @RequestMapping("/menus/getusermenu")
-    List<SimpleTree> getUserMenu(@RequestAttribute("user") User user) {
-        System.out.println("/menus/getusermenu");
-        return service.getUserMenu(user.getId());
+    @RequestMapping("/menus/currentuser")
+    List<Menu> getByCurrentUser(@RequestAttribute("user") User user) {
+        System.out.println("/menus/currentuser");
+        return service.getByCurrentUser(user.getId(), user.getPrivilegeArray());
     }
 
 }

@@ -36,8 +36,9 @@ public class UserService implements UserDetailsService {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-        User jwtUser = new User(user.getId(), user.getAccount(), user.getPassword(), authorities);
-        return jwtUser;
+        user.setAuthorities(authorities);
+        //User jwtUser = new User(user.getId(), user.getAccount(), user.getPassword(), authorities, user.getPrivilegeArray());
+        return user;
     }
 
 

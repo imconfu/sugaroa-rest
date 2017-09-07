@@ -81,23 +81,24 @@ public class MenuService {
         return tree;
     }
 
-    boolean checkUserMenuPurview(Map<String, Integer> userPurview, Map<String, Integer> menuPurview) {
+    private boolean isEnabled(Set<Integer> menuPriv, Set<Integer> userPriv) {
         // 用户拥有所有权限
-        if (userPurview.getOrDefault(PrivilegeService.ALL_RESOURCE, 0).equals(PrivilegeService.MAX_OPERATOR)) {
+        if (userPriv != null && userPriv.contains(new Integer(1))) {
             return true;
         }
 
         // 菜单未定义关联权限
-        if (menuPurview == null || menuPurview.size() == 0) return true;
+        if (menuPriv == null || menuPriv.size() == 0) return true;
 
         // 用户未定义权限
-        if (userPurview == null || userPurview.size() == 0) return false;
+        if (userPriv == null || userPriv.size() == 0) return false;
 
-        //遍历判断权限
-        for (String key : menuPurview.keySet()) {
-            //menuPurview.get(key)
-            System.out.println("Key = " + key);
-
+        // 计算交集判断权限
+        Set<Integer> result = new HashSet<Integer>();
+        result.addAll(userPriv);
+        result.retainAll(menuPriv);
+        if (result.size() > 0) {
+            return true;
         }
         return false;
     }
@@ -108,13 +109,32 @@ public class MenuService {
      * @param userId
      * @return
      */
-    public List<SimpleTree> getUserMenu(int userId) {
+    public List<Menu> getByCurrentUser(int userId, Set<Integer> userPriv) {
         List<Menu> menus = repository.findByStatusAndDeleted(1, 0);
 
-        List<SimpleTree> tree = new ArrayList<SimpleTree>();
-        for (SimpleTree node1 : menus) {
+        //先判断用户是否有菜单对应权限，对菜单做处理
+        Iterator<Menu> it = menus.iterator();
+        while (it.hasNext()) {
+            Menu menu = it.next();
+            //判断用户是否有该叶子(href有值)菜单权限
+            Set<Integer> menuPriv = menu.getPrivilegeArray();
+            if (menuPriv != null) {
+                if (!menu.getHref().isEmpty() && !isEnabled(menuPriv, userPriv)) {
+                    //用户没有该叶子菜单权限
+                    System.out.println(menu.getId() + "用户没有该叶子菜单权限");
+                    it.remove();    //循环删除，要使用it.remove，不能用menu.remove，否则会报ConcurrentModificationException
+                    continue;
+                }
+                //设置为null，接口不返回该值
+                menu.setPrivilegeArray(null);
+            }
+        }
+
+        //再转为树形结构
+        List<Menu> tree = new ArrayList<Menu>();
+        for (Menu node1 : menus) {
             boolean mark = false;
-            for (SimpleTree node2 : menus) {
+            for (Menu node2 : menus) {
                 if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
@@ -124,6 +144,7 @@ public class MenuService {
                 }
             }
             if (!mark) {
+
                 tree.add(node1);
             }
         }

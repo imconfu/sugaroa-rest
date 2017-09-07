@@ -59,7 +59,7 @@ public class User implements UserDetails {
     //以下为UserDetails需要的
     @JsonIgnore
     @Transient
-    private final Collection<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities;
 
     @JsonIgnore
     @Transient
@@ -81,21 +81,21 @@ public class User implements UserDetails {
     @Transient
     private Boolean enabled;
 
-    public User() {
-        this.authorities = null;
-    }
+//    public User() {
+//        this.authorities = null;
+//    }
 
-    public User(
-            int id,
-            String account,
-            String password,
-            Collection<? extends GrantedAuthority> authorities
-    ) {
-        this.id = id;
-        this.account = account;
-        this.password = password;
-        this.authorities = authorities;
-    }
+//    public User(
+//            int id,
+//            String account,
+//            String password,
+//            Collection<? extends GrantedAuthority> authorities
+//    ) {
+//        this.id = id;
+//        this.account = account;
+//        this.password = password;
+//        this.authorities = authorities;
+//    }
 
     public int getId() {
         return id;
@@ -108,6 +108,10 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
@@ -150,6 +154,8 @@ public class User implements UserDetails {
     }
 
     public Set<Integer> getPrivilegeArray() {
+        System.out.println("user privilegeArray");
+        System.out.println(privilegeArray);
         if (privilegeArray == null || privilegeArray.isEmpty())
             return null;
 
