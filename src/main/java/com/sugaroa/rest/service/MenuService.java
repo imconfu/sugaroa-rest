@@ -205,18 +205,9 @@ public class MenuService {
         }
         //有设置关联权限
         if (params.containsKey("privileges")) {
-            Set<Integer> privilegeList = new HashSet<Integer>();
             Map<String, Integer> object = new HashMap<String, Integer>();
             Set<Integer> list = new HashSet<Integer>();
-
-            //privileges格式不对会抛出java.lang.NumberFormatException
-            String[] privilegeArray = menu.getPrivileges().split(",");
-            if (!menu.getPrivileges().isEmpty() && privilegeArray.length > 0) {
-                for (String id : privilegeArray) {
-                    privilegeList.add(Integer.valueOf(id));
-                }
-                servicePrivilege.parse(privilegeList, object, list);
-            }
+            servicePrivilege.parse(menu.getPrivileges(), object, list);
 
             //不能判断不为空才处理，可能就是要赋为空
             menu.setPrivilegeArray(list);

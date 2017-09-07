@@ -10,7 +10,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import java.util.List;
 
 @RepositoryRestResource(path = "menu")
-public interface MenuRepository extends JpaRepository<Menu, Integer>, JpaSpecificationExecutor<Menu> {
+public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
     List<Menu> findByDeleted(@Param("deleted") int deleted);
 

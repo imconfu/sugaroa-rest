@@ -184,6 +184,18 @@ public class PrivilegeService {
      * @param object
      * @param list
      */
+    public void parse(String origin, Map<String, Integer> object, Set<Integer> list) {
+        Set<Integer> privilegeList = new HashSet<Integer>();
+
+        String[] privilegeArray = origin.split(",");
+        if(!origin.isEmpty() && privilegeArray.length > 0){
+            for (String id : privilegeArray) {
+                privilegeList.add(Integer.valueOf(id));
+            }
+            this.parse(privilegeList, object, list);
+        }
+    }
+
     public void parse(Set<Integer> origin, Map<String, Integer> object, Set<Integer> list) {
         System.out.println("PrivilegeService.parse Run！");
         // 首次进入判断是否拥有所有权限

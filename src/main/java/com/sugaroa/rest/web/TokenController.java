@@ -45,7 +45,7 @@ public class TokenController {
     @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
     Map<String, Object> grant(@NotBlank(message = "帐号不能为空") @RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
-        userRepository.testAA();
+        //userRepository.testAA();
         User user = userRepository.findByAccount(account);
         if (user == null) throw new AppException("用户不存在");
 
@@ -126,13 +126,13 @@ public class TokenController {
         return userRepository.findByAccount(id);
     }
 
-    @RequestMapping("/users")
-    Page<User> users() {
-        int page = 0, size = 10;
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        Pageable pageable = new PageRequest(page, size, sort);
-        return userRepository.findAll(pageable);
-    }
+//    @RequestMapping("/users")
+//    Page<User> users() {
+//        int page = 0, size = 10;
+//        Sort sort = new Sort(Sort.Direction.DESC, "id");
+//        Pageable pageable = new PageRequest(page, size, sort);
+//        return userRepository.findAll(pageable);
+//    }
 
     @RequestMapping("/hello/{Name}")
     public String helloName(@PathVariable String Name) {

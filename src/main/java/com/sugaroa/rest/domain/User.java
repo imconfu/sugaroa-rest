@@ -1,6 +1,8 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "oa_user")
@@ -23,27 +26,60 @@ public class User implements UserDetails {
     @Column(updatable = false)
     private String account;
 
+    private String mobile;
+
+    private String realname;
+
     @JsonIgnore
     private String password;
 
+    @JsonIgnore
+    private String salt;
+
+    private String remark;
+
+    //接收该api传入参数用
+    @Transient
+    @JsonIgnore
+    private String privileges;
+
+    @Column(name = "purview_array")
+    private String privilegeArray;
+
+    @Column(name = "purview_object")
+    private String privilegeObject;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    private int deleted;
+
+    //以下为UserDetails需要的
     @JsonIgnore
     @Transient
     private final Collection<? extends GrantedAuthority> authorities;
 
     @JsonIgnore
-    private String salt;
+    @Transient
+    private String username;
 
-    @Column(name = "purview_array")
-    private String purview_array;
+    @JsonIgnore
+    @Transient
+    private Boolean accountNonExpired;
 
-    @Column(name = "purview_object")
-    private String purview;
+    @JsonIgnore
+    @Transient
+    private Boolean accountNonLocked;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
-    private Date createTime;
+    @JsonIgnore
+    @Transient
+    private Boolean credentialsNonExpired;
 
-    private int deleted;
+    @JsonIgnore
+    @Transient
+    private Boolean enabled;
 
     public User() {
         this.authorities = null;
@@ -105,20 +141,88 @@ public class User implements UserDetails {
         this.salt = salt;
     }
 
-    public Map<String, Integer> getPurview() {
+    public String getPrivileges() {
+        return privileges;
+    }
+
+    public void setPrivileges(String privileges) {
+        this.privileges = privileges;
+    }
+
+    public Set<Integer> getPrivilegeArray() {
+        if (privilegeArray == null || privilegeArray.isEmpty())
+            return null;
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(purview, Map.class);
-        } catch (NullPointerException e) {
-            //relation值为空时
-            return null;
+            return objectMapper.readValue(privilegeArray, Set.class);
         } catch (IOException e) {
             return null;
         }
     }
 
-    public void setPurview(String purview) {
-        this.purview = purview;
+    public void setPrivilegeArray(Set<Integer> privilegeSet) {
+        if (privilegeSet == null || privilegeSet.size() == 0) {
+            this.privilegeArray = null;
+            return;
+        }
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            this.privilegeArray = mapper.writeValueAsString(privilegeSet);
+        } catch (JsonProcessingException e) {
+            this.privilegeArray = null;
+        }
+    }
+
+    public Map<String, Integer> getPrivilegeObject() {
+        if (privilegeObject == null || privilegeObject.isEmpty())
+            return null;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(privilegeObject, Map.class);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public void setPrivilegeObject(Map<String, Integer> privilegeMap) {
+        if (privilegeMap == null || privilegeMap.size() == 0) {
+            this.privilegeObject = null;
+            return;
+        }
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            this.privilegeObject = mapper.writeValueAsString(privilegeMap);
+        } catch (JsonProcessingException e) {
+            this.privilegeObject = null;
+        }
+    }
+
+    public String getRealname() {
+        return realname;
+    }
+
+    public void setRealname(String realname) {
+        this.realname = realname;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     @Override
