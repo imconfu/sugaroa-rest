@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -20,8 +21,12 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RestController
+@Validated
 public class UserController {
     private UserService service;
     private UserRepository userRepository;
@@ -37,20 +42,33 @@ public class UserController {
     }
 
     @RequestMapping("/users")
-    Page<User> findAll( HttpServletRequest request) {
-        int page = 0, size = 100;
+    Page<User> findAll(
+            @RequestParam(value = "account", required = false) String account,
+            @RequestParam(value = "mobile", required = false) String mobile,
+            @Min(value = 2, message = "记录数必须大于2")
+            @RequestParam(value = "rows", required = false) Integer size,
+            @RequestParam(value = "page", required = false) Integer page) {
+
+        if (page == null) page = 0;
+        if (size == null) size = 50;
+
+        System.out.println(page + "|" + size);
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(page, size, sort);
         return userRepository.findAll(new Specification<User>() {
             @Override
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate criteria = null;
-                criteria = cb.like(root.get("account"), "%con%");
-                //query.where(resultPre);
-                criteria = cb.and(criteria, cb.equal(root.get("deleted"), 0));
+                List<Predicate> predicates = new ArrayList<>();
 
-                //query.where(criteria)或用return criteria
-                return null;
+                if(account!=null && !account.isEmpty()){
+                    predicates.add(cb.like(root.get("account"), "%"+account+"%"));
+                }
+
+                if(mobile!=null && !mobile.isEmpty()){
+                    predicates.add(cb.like(root.get("mobile"), "%"+mobile+"%"));
+                }
+
+                return cb.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         }, pageable);
     }

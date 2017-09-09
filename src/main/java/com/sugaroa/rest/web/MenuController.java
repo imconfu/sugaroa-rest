@@ -5,6 +5,7 @@ import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +13,8 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
+@Validated
 @PreAuthorize("hasRole('ADMIN')")
 public class MenuController {
 
@@ -29,7 +30,7 @@ public class MenuController {
     }
 
     @RequestMapping(value = "/menus/{id}")
-    public Menu get(@PathVariable Integer id) {
+    public Menu get(@Min(value = 99, message = "菜单ID必须大于99") @PathVariable Integer id) {
         return service.get(id);
     }
 

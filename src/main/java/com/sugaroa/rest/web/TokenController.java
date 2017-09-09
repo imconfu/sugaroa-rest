@@ -72,6 +72,7 @@ public class TokenController {
                 .sign(algorithm);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("token", token);
+        result.put("privileges", user.getPrivilegeObject());
         return result;
     }
 
