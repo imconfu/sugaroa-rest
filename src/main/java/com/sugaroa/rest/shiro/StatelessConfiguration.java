@@ -5,11 +5,14 @@ import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.*;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,6 +27,10 @@ public class StatelessConfiguration {
         // 必须设置 SecurityManager
         sffb.setSecurityManager(securityManager);
 
+        Map<String, Filter> filters = new LinkedHashMap<String,Filter>();
+        filters.put("jwtACF", jwtAccessControlFilter());
+        sffb.setFilters(filters);
+
         //设置登录地址，即：这个地址访问不验证身份及权限这些
         //sffb.setLoginUrl("/token/grant");
 
@@ -31,8 +38,9 @@ public class StatelessConfiguration {
         Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
 
         //"/**"这个过滤器放在最下面，authc：必须认证通过才可以访问
-         filterChainDefinitionMap.put("/token/grant", "anon");
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/token/grant", "anon");
+        //filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "noSessionCreation, jwtACF");//,JWTACF
 
         sffb.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return sffb;
@@ -96,6 +104,11 @@ public class StatelessConfiguration {
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         hashedCredentialsMatcher.setHashIterations(1);
         return hashedCredentialsMatcher;
+    }
+
+    @Bean
+    public JWTAccessControlFilter jwtAccessControlFilter(){
+        return new JWTAccessControlFilter();
     }
 }
 

@@ -71,7 +71,7 @@ public class TokenController {
                 .sign(algorithm);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("token", jwtToken);
-        //result.put("privileges", user.getPrivilegeObject());
+        //result.put("roles", user.getRoles()); //会有错误
         return result;
     }
 

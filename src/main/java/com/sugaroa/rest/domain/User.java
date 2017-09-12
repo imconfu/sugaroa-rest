@@ -9,10 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "shiro_user")
@@ -37,6 +34,10 @@ public class User extends Base implements Serializable {
     private String remark;
 
     private Boolean enabled;
+
+    @ManyToMany
+    @JoinTable(name = "shiro_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private List<Role> roles;
 
     public String getAccount() {
         return account;
@@ -92,6 +93,14 @@ public class User extends Base implements Serializable {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
     public String getCredentialsSalt() {
