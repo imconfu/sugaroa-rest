@@ -93,4 +93,8 @@ public class User extends Base implements Serializable {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+
+    public String getCredentialsSalt() {
+        return this.account + this.salt;
+    }
 }

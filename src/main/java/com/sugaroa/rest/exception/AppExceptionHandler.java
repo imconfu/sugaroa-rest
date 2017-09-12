@@ -1,5 +1,6 @@
 package com.sugaroa.rest.exception;
 
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -71,4 +72,17 @@ public class AppExceptionHandler {
         this.result.put("message", strBuilder.toString());
         return this.result;
     }
+
+    /**
+     * shiro 验证失败
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(IncorrectCredentialsException.class)
+    @ResponseBody
+    public Map<String, Object> IncorrectCredentialsExceptionHandler(IncorrectCredentialsException e) {
+        this.result.put("message", e.getMessage());
+        return this.result;
+    }
+
 }

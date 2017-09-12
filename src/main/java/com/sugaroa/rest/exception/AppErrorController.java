@@ -40,7 +40,7 @@ public class AppErrorController extends BasicErrorController {
         result.put("error", body.get("error"));
         result.put("message", body.get("message"));
         result.put("exception", "异常原因");
-        result.put("code", 0);
+        result.put("code", -1);
 
         if (body.containsKey("exception")) {
             Object exception = body.get("exception");

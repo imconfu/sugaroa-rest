@@ -4,6 +4,10 @@ import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +73,13 @@ public class UserService {
 
         //同pid下重名判断及path处理
         if (params.containsKey("password")) {
-            // TODO 生成salt并生成password
+            RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
+            String salt = randomNumberGenerator.nextBytes().toHex();
+            user.setSalt(salt);
+
+            String saltPassword = new SimpleHash("MD5", user.getPassword(), ByteSource.Util.bytes(user.getCredentialsSalt()), 1).toHex();
+            user.setPassword(saltPassword);
+
         }
         //有设置关联权限
 //        if (params.containsKey("privileges")) {

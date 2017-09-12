@@ -9,6 +9,11 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -33,6 +39,42 @@ public class TokenController {
         this.userRepository = userRepository;
     }
 
+
+//    @RequestMapping("/token/grant")
+//    public String tokenGrant(HttpServletRequest request, Map<String, Object> map) throws Exception {
+//        System.out.println("after token/grant");
+//        String exception = (String) request.getAttribute("shiroLoginFailure");
+//        return exception;
+//    }
+
+    @RequestMapping("/token/grant")
+    public Map<String, Object> tokenGrant(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
+        System.out.println("Request: token/grant");
+
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        //手动调用验证，取代通过拦截器调用doGetAuthenticationInfo
+        AuthenticationInfo info = SecurityUtils.getSecurityManager().authenticate(token);
+        User user = (User) info.getPrincipals().getPrimaryPrincipal();
+
+        // 生成token
+        Algorithm algorithm = Algorithm.HMAC256("secret12");
+        String jwtToken = JWT.create()
+                .withIssuer("auth0")        //iss: jwt签发者
+                .withSubject("user")        //sub: jwt所面向的用户
+                //.withAudience()             //aud: 接收jwt的一方
+                //.withExpiresAt()          //exp: jwt的过期时间，这个过期时间必须要大于签发时间
+                //.withNotBefore()          //nbf: 定义在什么时间之前，该jwt都是不可用的.
+                .withIssuedAt(new Date())   //iat: jwt的签发时间
+                //.withJWTId()              //jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
+                .withClaim("id", user.getId())
+                .withClaim("account", user.getAccount())
+                .sign(algorithm);
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("token", jwtToken);
+        //result.put("privileges", user.getPrivilegeObject());
+        return result;
+    }
+
     /**
      * 授权token，验证用户名及密码
      *
@@ -41,7 +83,6 @@ public class TokenController {
      * @return
      * @throws UnsupportedEncodingException
      */
-    @RequestMapping("/token/grant")
     //(required=true, defaultValue="")
     Map<String, Object> grant(@NotBlank(message = "帐号不能为空") @RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         //userRepository.testAA();
