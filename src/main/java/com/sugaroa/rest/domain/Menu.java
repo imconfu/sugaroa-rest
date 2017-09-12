@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Entity
-@Table(name = "oa_menu")
+@Table(name = "shiro_menu")
 @DynamicUpdate
 public class Menu extends SimpleTree {
 
@@ -31,10 +31,9 @@ public class Menu extends SimpleTree {
     public Menu() {
     }
 
-    public Menu(Integer id, Integer pid, String text, String href, String privilegeArray) {
+    public Menu(Integer id, Integer pid, String text, String href) {
         super(id, pid, text);
         this.href = href;
-        this.privilegeArray = privilegeArray;
     }
 
     public String getHref() {

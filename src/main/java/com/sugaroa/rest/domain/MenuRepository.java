@@ -19,15 +19,15 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
 //    List<SimpleTree> findByStatusAndDeleted(@Param("status") int status, @Param("deleted") int deleted);
 
     //查询获取部分字段
-    @Query("select new Menu(m.id,m.pid,m.text,m.href,m.privilegeArray) from Menu m where m.status=:status and m.deleted=:deleted")
-    List<Menu> findByStatusAndDeleted(@Param("status") int status, @Param("deleted") int deleted);
+    @Query("select new Menu(m.id,m.pid,m.text,m.href) from Menu m where m.enabled=:enabled and m.deleted=:deleted")
+    List<Menu> findByEnabledAndDeleted(@Param("enabled") int enabled, @Param("deleted") int deleted);
 
     int countByPidAndText(@Param("pid") int pid, @Param("text") String text);
 
     int countByPidAndTextAndIdNot(@Param("pid") int pid, @Param("text") String text, @Param("id") int id);
 
-    @RestResource(path = "text", rel = "text")
-    Privilege findByText(@Param("text") String text);
+//    @RestResource(path = "text", rel = "text")
+//    Privilege findByText(@Param("text") String text);
 
     //List<Menu> findByStatusAndDeleted(@Param("status") int status, @Param("deleted") int deleted);
 

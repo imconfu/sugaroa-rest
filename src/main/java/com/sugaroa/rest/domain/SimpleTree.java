@@ -34,9 +34,9 @@ public class SimpleTree {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
-    private Integer status;
+    protected Boolean enabled = Boolean.FALSE;
 
-    private Integer deleted;
+    protected Boolean deleted = Boolean.TRUE;
 
     private Integer sort;
 
@@ -101,19 +101,19 @@ public class SimpleTree {
         this.updateTime = updateTime;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public Integer getDeleted() {
+    public Boolean getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(int deleted) {
+    public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
 

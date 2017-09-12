@@ -4,7 +4,6 @@ import com.sugaroa.rest.domain.Menu;
 import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @Validated
-@PreAuthorize("hasRole('ADMIN')")
 public class MenuController {
 
     private MenuService service;
@@ -57,7 +55,8 @@ public class MenuController {
     @RequestMapping("/menus/currentuser")
     List<Menu> getByCurrentUser(@RequestAttribute("user") User user) {
         System.out.println("/menus/currentuser");
-        return service.getByCurrentUser(user.getId(), user.getPrivilegeArray());
+        //return service.getByCurrentUser(user.getId(), user.getPrivilegeArray());
+        return null;
     }
 
 }

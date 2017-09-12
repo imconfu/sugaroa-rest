@@ -13,12 +13,10 @@ import java.util.*;
 @Service
 public class MenuService {
     private final MenuRepository repository;
-    private final PrivilegeService servicePrivilege;
 
     @Autowired
-    public MenuService(MenuRepository repository, PrivilegeService servicePrivilege) {
+    public MenuService(MenuRepository repository) {
         this.repository = repository;
-        this.servicePrivilege = servicePrivilege;
     }
 
 
@@ -60,7 +58,7 @@ public class MenuService {
      */
     public List<SimpleTree> getComboTree() {
 
-        List<Menu> menus = repository.findByStatusAndDeleted(1, 0);
+        List<Menu> menus = repository.findByEnabledAndDeleted(1, 0);
 
         List<SimpleTree> tree = new ArrayList<SimpleTree>();
         for (SimpleTree node1 : menus) {
@@ -110,7 +108,7 @@ public class MenuService {
      * @return
      */
     public List<Menu> getByCurrentUser(int userId, Set<Integer> userPriv) {
-        List<Menu> menus = repository.findByStatusAndDeleted(1, 0);
+        List<Menu> menus = repository.findByEnabledAndDeleted(1, 0);
 
         //先判断用户是否有菜单对应权限，对菜单做处理
         Iterator<Menu> it = menus.iterator();
@@ -159,7 +157,7 @@ public class MenuService {
     public Map<Integer, String> getPairs() {
         Map<Integer, String> result = new HashMap<Integer, String>();
 
-        List<Menu> Menus = repository.findByStatusAndDeleted(1, 0);
+        List<Menu> Menus = repository.findByEnabledAndDeleted(1, 0);
         for (SimpleTree menu : Menus) {
             result.put(menu.getId(), menu.getText());
         }
@@ -228,7 +226,7 @@ public class MenuService {
         if (params.containsKey("privileges")) {
             Map<String, Integer> object = new HashMap<String, Integer>();
             Set<Integer> list = new HashSet<Integer>();
-            servicePrivilege.parse(menu.getPrivileges(), object, list);
+            //servicePrivilege.parse(menu.getPrivileges(), object, list);
 
             //不能判断不为空才处理，可能就是要赋为空
             menu.setPrivilegeArray(list);

@@ -7,38 +7,29 @@ import com.sugaroa.rest.exception.AppException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository repository;
-    private final PrivilegeService servicePrivilege;
 
-    @Autowired
-    public UserService(UserRepository repository, PrivilegeService servicePrivilege) {
-        this.repository = repository;
-        this.servicePrivilege = servicePrivilege;
+    /**
+     * shiro
+     *
+     * @param account
+     * @return
+     */
+    public User findByUsername(String account) {
+        System.out.println("UserService.findByAccount()");
+        return repository.findByAccount(account);
     }
 
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = repository.findByAccount(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with account '%s'.", username));
-        }
-
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        user.setAuthorities(authorities);
-        //User jwtUser = new User(user.getId(), user.getAccount(), user.getPassword(), authorities, user.getPrivilegeArray());
-        return user;
+    @Autowired
+    public UserService(UserRepository repository) {
+        this.repository = repository;;
     }
 
 
@@ -81,19 +72,19 @@ public class UserService implements UserDetailsService {
             // TODO 生成salt并生成password
         }
         //有设置关联权限
-        if (params.containsKey("privileges")) {
-            Map<String, Integer> object = new HashMap<String, Integer>();
-            Set<Integer> list = new HashSet<Integer>();
-            servicePrivilege.parse(user.getPrivileges(), object, list);
-
-            //不能判断不为空才处理，可能就是要赋为空
-            user.setPrivilegeArray(list);
-            user.setPrivilegeObject(object);
-        }
+//        if (params.containsKey("privileges")) {
+//            Map<String, Integer> object = new HashMap<String, Integer>();
+//            Set<Integer> list = new HashSet<Integer>();
+//            servicePrivilege.parse(user.getPrivileges(), object, list);
+//
+//            //不能判断不为空才处理，可能就是要赋为空
+//            user.setPrivilegeArray(list);
+//            user.setPrivilegeObject(object);
+//        }
         return repository.save(user);
     }
 
-    public User get(Integer id)  {
+    public User get(Integer id) {
         return repository.findOne(id);
     }
 }

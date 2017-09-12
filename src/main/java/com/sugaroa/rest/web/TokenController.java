@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +49,12 @@ public class TokenController {
         if (user == null) throw new AppException("用户不存在");
 
         //验证密码
-        Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
-        String md5Password = passwordEncoder.encodePassword(password, user.getSalt());
-        //System.out.println(md5Password);
-        if (!md5Password.equals(user.getPassword())) {
-            throw new AppException("密码错误");
-        }
+//        Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
+//        String md5Password = passwordEncoder.encodePassword(password, user.getSalt());
+//        //System.out.println(md5Password);
+//        if (!md5Password.equals(user.getPassword())) {
+//            throw new AppException("密码错误");
+//        }
 
         // 生成token
         Algorithm algorithm = Algorithm.HMAC256("secret12");
@@ -72,7 +71,7 @@ public class TokenController {
                 .sign(algorithm);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("token", token);
-        result.put("privileges", user.getPrivilegeObject());
+        //result.put("privileges", user.getPrivilegeObject());
         return result;
     }
 
