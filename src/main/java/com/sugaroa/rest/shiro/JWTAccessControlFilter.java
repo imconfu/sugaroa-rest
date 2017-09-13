@@ -12,6 +12,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 
 public class JWTAccessControlFilter extends AccessControlFilter {
     @Override
@@ -42,6 +43,8 @@ public class JWTAccessControlFilter extends AccessControlFilter {
         } catch (SignatureVerificationException exception) {
             System.out.println("JWTVerificationException " + exception.toString());
             throw exception;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
 
         return accessAllowed;

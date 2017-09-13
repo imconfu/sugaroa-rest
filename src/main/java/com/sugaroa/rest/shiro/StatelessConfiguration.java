@@ -28,7 +28,10 @@ public class StatelessConfiguration {
         sffb.setSecurityManager(securityManager);
 
         Map<String, Filter> filters = new LinkedHashMap<String,Filter>();
-        filters.put("jwtACF", jwtAccessControlFilter());
+        // 特别注意：这里不能用jwtAccessControlFilter函数作为put的值
+        // 否则所有的请求都会被jwt这个过滤器拦截，还不知道为什么！！
+        filters.put("jwt", new JWTAccessControlFilter());
+        //filters.put("jwtAF", jwtAuthenticationFilter());
         sffb.setFilters(filters);
 
         //设置登录地址，即：这个地址访问不验证身份及权限这些
@@ -39,8 +42,11 @@ public class StatelessConfiguration {
 
         //"/**"这个过滤器放在最下面，authc：必须认证通过才可以访问
         filterChainDefinitionMap.put("/token/grant", "anon");
-        //filterChainDefinitionMap.put("/**", "authc");
-        filterChainDefinitionMap.put("/**", "noSessionCreation, jwtACF");//,JWTACF
+        filterChainDefinitionMap.put("/**", "jwt");
+        //filterChainDefinitionMap.put("/users/**", "jwtACF");
+        //filterChainDefinitionMap.put("/token/grant", "anon");
+        //filterChainDefinitionMap.put("/**", "test");
+        //filterChainDefinitionMap.put("/user/**", "jwtACF");//noSessionCreation,JWTACF
 
         sffb.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return sffb;
@@ -94,7 +100,7 @@ public class StatelessConfiguration {
     }
 
     /**
-     * 密码的处理方法，md5(passwork+salt) 1次
+     * 密码的处理方法，md5(salt+passwork) 1次
      * @return
      */
     @Bean
@@ -109,6 +115,11 @@ public class StatelessConfiguration {
     @Bean
     public JWTAccessControlFilter jwtAccessControlFilter(){
         return new JWTAccessControlFilter();
+    }
+
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter(){
+        return new JWTAuthenticationFilter();
     }
 }
 
