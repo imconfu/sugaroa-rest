@@ -1,7 +1,9 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
@@ -33,10 +35,14 @@ public class User extends Base implements Serializable {
 
     private String remark;
 
-    private Boolean enabled;
+    @Column(columnDefinition = "bit", length = 1)
+    private Integer enabled;
 
-    @ManyToMany
-    @JoinTable(name = "shiro_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    @ManyToMany //(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
+    @JoinTable(name = "shiro_user_role",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    @JsonManagedReference
     private List<Role> roles;
 
     public String getAccount() {
@@ -87,11 +93,11 @@ public class User extends Base implements Serializable {
         this.remark = remark;
     }
 
-    public Boolean getEnabled() {
+    public Integer getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(Integer enabled) {
         this.enabled = enabled;
     }
 

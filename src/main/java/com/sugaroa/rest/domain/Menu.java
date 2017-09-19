@@ -1,12 +1,15 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,25 +17,25 @@ import java.util.Set;
 @Table(name = "shiro_menu")
 @DynamicUpdate
 public class Menu extends SimpleTree {
-
-    //接收该api传入参数用
     @Transient
-    @JsonIgnore
-    private String privileges;
+    private static final long serialVersionUID = 1L;
 
-    @Column(name = "purview_array")
-    private String privilegeArray;
-
-    @Column(name = "purview_object")
-    private String privilegeObject;
+    //角色 <--> 权限关系: 多对多;
+    @ManyToMany //(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
+    @JoinTable(name = "shiro_menu_permission",
+            joinColumns = {@JoinColumn(name = "menu_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
+    private List<Permission> permissions;
 
     private String href;
+
+    protected Integer sort;
 
     public Menu() {
     }
 
-    public Menu(Integer id, Integer pid, String text, String href) {
-        super(id, pid, text);
+    public Menu(Integer id, Integer parentId, String text, String href) {
+        super(id, parentId, text);
         this.href = href;
     }
 
@@ -44,65 +47,19 @@ public class Menu extends SimpleTree {
         this.href = href;
     }
 
-    public String getPrivileges() {
-        return privileges;
+    public List<Permission> getPermissions() {
+        return permissions;
     }
 
-    public void setPrivileges(String privileges) {
-        this.privileges = privileges;
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
     }
 
-    public Set<Integer> getPrivilegeArray() {
-        System.out.println("menu privilegeArray");
-        System.out.println(privilegeArray);
-        if (privilegeArray == null || privilegeArray.isEmpty())
-            return null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(privilegeArray, Set.class);
-        } catch (IOException e) {
-            return null;
-        }
+    public Integer getSort() {
+        return sort;
     }
 
-    public void setPrivilegeArray(Set<Integer> privilegeSet) {
-        if (privilegeSet == null || privilegeSet.size() == 0) {
-            this.privilegeArray = null;
-            return;
-        }
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            this.privilegeArray = mapper.writeValueAsString(privilegeSet);
-        } catch (JsonProcessingException e) {
-            this.privilegeArray = null;
-        }
-    }
-
-    public Map<String, Integer> getPrivilegeObject() {
-        if (privilegeObject == null || privilegeObject.isEmpty())
-            return null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(privilegeObject, Map.class);
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    public void setPrivilegeObject(Map<String, Integer> privilegeMap) {
-        if (privilegeMap == null || privilegeMap.size() == 0) {
-            this.privilegeObject = null;
-            return;
-        }
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            this.privilegeObject = mapper.writeValueAsString(privilegeMap);
-        } catch (JsonProcessingException e) {
-            this.privilegeObject = null;
-        }
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 }

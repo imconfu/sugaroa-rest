@@ -1,5 +1,8 @@
 package com.sugaroa.rest.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -19,21 +22,24 @@ public class Role extends Base implements Serializable {
     @Column(unique = true)
     private String title;
 
-    private Boolean enabled = Boolean.FALSE;
-
     //角色 <--> 权限关系: 多对多;
-    @ManyToMany(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
-    @JoinTable(name = "shiro_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
-    private List<Permission> permissions;
+//    @ManyToMany //(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
+//    @JoinTable(name = "shiro_role_permission",
+//            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+//            inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
+//    private List<Permission> permissions;
 
     //角色 <--> 用户关系: 多对多;
-    @ManyToMany
-    @JoinTable(name = "shiro_user_role", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
+//    @ManyToMany
+//    @JoinTable(name = "shiro_user_role",
+//            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+//            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
+    @ManyToMany(mappedBy = "roles")
+    @JsonBackReference
     private List<User> users;// 一个角色对应多个用户
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
+    @Column(columnDefinition = "bit", length = 1)
+    protected Integer enabled = 0;
 
     public String getCode() {
         return code;
@@ -51,21 +57,21 @@ public class Role extends Base implements Serializable {
         this.title = title;
     }
 
-    public Boolean getEnabled() {
+    public Integer getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(Integer enabled) {
         this.enabled = enabled;
     }
 
-    public List<Permission> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(List<Permission> permissions) {
-        this.permissions = permissions;
-    }
+//    public List<Permission> getPermissions() {
+//        return permissions;
+//    }
+//
+//    public void setPermissions(List<Permission> permissions) {
+//        this.permissions = permissions;
+//    }
 
     public List<User> getUsers() {
         return users;
@@ -75,9 +81,9 @@ public class Role extends Base implements Serializable {
         this.users = users;
     }
 
-    @Override
-    public String toString() {
-        return "Role [id=" + id + ",code=" + code + ",title=" + title + ",enabled=" + enabled
-                + ",permissions=" + permissions + ",users=" + users + "]";
-    }
+//    @Override
+//    public String toString() {
+//        return "Role [id=" + id + ",code=" + code + ",title=" + title + ",enabled=" + enabled
+//                + ",permissions=" + permissions + ",users=" + users + "]";
+//    }
 }

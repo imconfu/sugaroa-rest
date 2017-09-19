@@ -33,13 +33,13 @@ public class MenuController {
     }
 
     @RequestMapping(value = "/menus", method = RequestMethod.POST)
-    public Menu create(HttpServletRequest request) {
-        return service.save(request.getParameterMap());
+    public Menu create(@RequestBody  Map<String, Object> params) {
+        return service.save(params);
     }
 
     @RequestMapping(value = "/menus/{id}", method = RequestMethod.POST)
-    public Menu update(@Min(value = 1, message = "菜单ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
-        return service.save(id, request.getParameterMap());
+    public Menu update(@Min(value = 1, message = "菜单ID必须大于1") @PathVariable Integer id, @RequestBody  Map<String, Object> params) {
+        return service.save(id, params);
     }
 
     @RequestMapping("/menus/combotree")
@@ -53,10 +53,9 @@ public class MenuController {
     }
 
     @RequestMapping("/menus/currentuser")
-    List<Menu> getByCurrentUser(@RequestAttribute("user") User user) {
+    List<Menu> getByCurrentUser(@RequestAttribute("userId") Integer userId) {
         System.out.println("/menus/currentuser");
-        //return service.getByCurrentUser(user.getId(), user.getPrivilegeArray());
-        return null;
+        return service.getByCurrentUser(userId);
     }
 
 }

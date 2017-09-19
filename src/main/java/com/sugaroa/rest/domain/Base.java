@@ -24,7 +24,8 @@ public class Base {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected Date updateTime;
 
-    protected Boolean deleted = Boolean.TRUE;
+    @Column(columnDefinition = "bit", length = 1)
+    protected Integer deleted = 1;
 
     public Integer getId() {
         return id;
@@ -50,11 +51,11 @@ public class Base {
         this.updateTime = updateTime;
     }
 
-    public Boolean getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
 }

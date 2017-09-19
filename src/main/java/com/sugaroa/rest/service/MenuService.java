@@ -3,11 +3,13 @@ package com.sugaroa.rest.service;
 import com.sugaroa.rest.domain.*;
 import com.sugaroa.rest.domain.Menu;
 import com.sugaroa.rest.exception.AppException;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @Service
@@ -36,7 +38,7 @@ public class MenuService {
         for (Menu node1 : menus) {
             boolean mark = false;
             for (Menu node2 : menus) {
-                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
+                if (node1.getParentId() != null && node1.getParentId().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Object>());
@@ -64,7 +66,7 @@ public class MenuService {
         for (SimpleTree node1 : menus) {
             boolean mark = false;
             for (SimpleTree node2 : menus) {
-                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
+                if (node1.getParentId() != null && node1.getParentId().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Object>());
@@ -107,33 +109,33 @@ public class MenuService {
      * @param userId
      * @return
      */
-    public List<Menu> getByCurrentUser(int userId, Set<Integer> userPriv) {
+    public List<Menu> getByCurrentUser(int userId) {
         List<Menu> menus = repository.findByEnabledAndDeleted(1, 0);
 
         //先判断用户是否有菜单对应权限，对菜单做处理
-        Iterator<Menu> it = menus.iterator();
-        while (it.hasNext()) {
-            Menu menu = it.next();
-            //判断用户是否有该叶子(href有值)菜单权限
-            Set<Integer> menuPriv = menu.getPrivilegeArray();
-            if (menuPriv != null) {
-                if (!menu.getHref().isEmpty() && !isEnabled(menuPriv, userPriv)) {
-                    //用户没有该叶子菜单权限
-                    System.out.println(menu.getId() + "用户没有该叶子菜单权限");
-                    it.remove();    //循环删除，要使用it.remove，不能用menu.remove，否则会报ConcurrentModificationException
-                    continue;
-                }
-                //设置为null，接口不返回该值
-                menu.setPrivilegeArray(null);
-            }
-        }
+//        Iterator<Menu> it = menus.iterator();
+//        while (it.hasNext()) {
+//            Menu menu = it.next();
+//            //判断用户是否有该叶子(href有值)菜单权限
+//            Set<Integer> menuPriv = menu.getPrivilegeArray();
+//            if (menuPriv != null) {
+//                if (!menu.getHref().isEmpty() && !isEnabled(menuPriv, userPriv)) {
+//                    //用户没有该叶子菜单权限
+//                    System.out.println(menu.getId() + "用户没有该叶子菜单权限");
+//                    it.remove();    //循环删除，要使用it.remove，不能用menu.remove，否则会报ConcurrentModificationException
+//                    continue;
+//                }
+//                //设置为null，接口不返回该值
+//                menu.setPrivilegeArray(null);
+//            }
+//        }
 
         //再转为树形结构
         List<Menu> tree = new ArrayList<Menu>();
         for (Menu node1 : menus) {
             boolean mark = false;
             for (Menu node2 : menus) {
-                if (node1.getPid() != null && node1.getPid().equals(node2.getId())) {
+                if (node1.getParentId() != null && node1.getParentId().equals(node2.getId())) {
                     mark = true;
                     if (node2.getChildren() == null)
                         node2.setChildren(new ArrayList<Object>());
@@ -167,7 +169,7 @@ public class MenuService {
     /**
      * 创建
      */
-    public Menu save(Map<String, String[]> params) {
+    public Menu save(Map<String, Object> params) {
         Menu menu = new Menu();
         return this.save(menu, params);
     }
@@ -178,7 +180,7 @@ public class MenuService {
      * @param id
      * @param params
      */
-    public Menu save(Integer id, Map<String, String[]> params) {
+    public Menu save(Integer id, Map<String, Object> params) {
 
         //先查找对应记录
         Menu menu = repository.findOne(id);
@@ -186,15 +188,25 @@ public class MenuService {
 
     }
 
-    public Menu save(Menu menu, Map<String, String[]> params) {
+    public Menu save(Menu menu, Map<String, Object> params) {
 
         //初始化BeanWrapper
         BeanWrapper bw = new BeanWrapperImpl(menu);
 
         //根据params对需要更新的值做处理，即动态调用对应的setter方法
-        for (Map.Entry<String, String[]> entry : params.entrySet()) {
-            //只要有传参数进来，就认为修改该属性
-            bw.setPropertyValue(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getKey().equals("permissions")) {
+                menu.getPermissions().clear();
+                List<Integer> permissions = (List<Integer>)entry.getValue();
+                for(Integer id : permissions) {
+                    Permission p = new Permission();
+                    p.setId(id);
+                    menu.getPermissions().add(p);
+                }
+            } else {
+                //只要有传参数进来，就认为修改该属性
+                bw.setPropertyValue(entry.getKey(), entry.getValue());
+            }
         }
         //把实体类的值填充了，才能再做下一步处理。
 
@@ -204,10 +216,10 @@ public class MenuService {
             int count = 0;
             if (menu.getId() == null) {
                 // 创建时
-                count = repository.countByPidAndText(menu.getPid(), menu.getText());
+                count = repository.countByParentIdAndText(menu.getParentId(), menu.getText());
             } else {
                 // 修改时
-                count = repository.countByPidAndTextAndIdNot(menu.getPid(), menu.getText(), menu.getId());
+                count = repository.countByParentIdAndTextAndIdNot(menu.getParentId(), menu.getText(), menu.getId());
             }
 
             if (count > 0) {
@@ -215,9 +227,9 @@ public class MenuService {
             }
 
             //获取path
-            if (menu.getPid() > 1) {
-                Menu parentMenu = repository.findOne(menu.getPid());
-                menu.setPath(parentMenu.getPath() + "," + menu.getPid());
+            if (menu.getParentId() > 1) {
+                Menu parentMenu = repository.findOne(menu.getParentId());
+                menu.setPath(parentMenu.getPath() + "," + menu.getParentId());
             } else {
                 menu.setPath("1");
             }
@@ -229,8 +241,8 @@ public class MenuService {
             //servicePrivilege.parse(menu.getPrivileges(), object, list);
 
             //不能判断不为空才处理，可能就是要赋为空
-            menu.setPrivilegeArray(list);
-            menu.setPrivilegeObject(object);
+//            menu.setPrivilegeArray(list);
+//            menu.setPrivilegeObject(object);
         }
         return repository.save(menu);
     }

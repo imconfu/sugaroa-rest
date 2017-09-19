@@ -48,10 +48,10 @@ public class TokenController {
 //    }
 
     @RequestMapping("/token/grant")
-    public Map<String, Object> tokenGrant(@RequestParam String username, @RequestParam String password) throws UnsupportedEncodingException {
+    public Map<String, Object> tokenGrant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         System.out.println("Request: token/grant");
 
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(account, password);
         //手动调用验证，取代通过拦截器调用doGetAuthenticationInfo
         AuthenticationInfo info = SecurityUtils.getSecurityManager().authenticate(token);
         User user = (User) info.getPrincipals().getPrimaryPrincipal();

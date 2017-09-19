@@ -13,43 +13,43 @@ import java.util.List;
 public class SimpleTree {
     @Id
     @GeneratedValue
-    private Integer id;
+    protected Integer id;
 
-    private Integer pid;
+    protected Integer parentId;
 
     @NotNull(message = "Path不能为空")
-    private String path;
+    protected String path;
 
     @Column(nullable = false, name = "title")
     @NotNull(message = "名称不能为空")
-    private String text;
+    protected String text;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false, insertable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    protected Date createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
+    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false, insertable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
+    protected Date updateTime;
 
-    protected Boolean enabled = Boolean.FALSE;
+    @Column(columnDefinition = "bit", length = 1)
+    protected Integer enabled = 1;
 
-    protected Boolean deleted = Boolean.TRUE;
-
-    private Integer sort;
+    @Column(columnDefinition = "bit", length = 1)
+    protected Integer deleted = 0;
 
     @Transient
-    private List<Object> children;
+    protected List<Object> children;
 
     public SimpleTree() {
     }
 
-    public SimpleTree(Integer id, Integer pid, String text) {
+    public SimpleTree(Integer id, Integer parentId, String text) {
         super();
         this.id = id;
-        this.pid = pid;
+        this.parentId = parentId;
         this.text = text;
     }
 
@@ -61,12 +61,12 @@ public class SimpleTree {
         this.id = id;
     }
 
-    public Integer getPid() {
-        return pid;
+    public Integer getParentId() {
+        return parentId;
     }
 
-    public void setPid(Integer pid) {
-        this.pid = pid;
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     public String getPath() {
@@ -101,19 +101,19 @@ public class SimpleTree {
         this.updateTime = updateTime;
     }
 
-    public Boolean getEnabled() {
+    public Integer getEnabled() {
         return enabled;
     }
 
-    public void setEnabled(Boolean enabled) {
+    public void setEnabled(Integer enabled) {
         this.enabled = enabled;
     }
 
-    public Boolean getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
 
@@ -123,14 +123,6 @@ public class SimpleTree {
 
     public void setChildren(List<Object> children) {
         this.children = children;
-    }
-
-    public Integer getSort() {
-        return sort;
-    }
-
-    public void setSort(Integer sort) {
-        this.sort = sort;
     }
 
 }
