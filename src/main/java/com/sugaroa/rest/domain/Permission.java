@@ -27,6 +27,12 @@ public class Permission extends SimpleTree {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles;
 
+    public Permission() {
+    }
+
+    public Permission(Integer id) {
+        super(id);
+    }
 
     public String getExpression() {
         return expression;

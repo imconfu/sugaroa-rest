@@ -15,17 +15,17 @@ public class Base {
     protected Integer id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false)
+    @Column(name = "create_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP", updatable = false, insertable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected Date createTime;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false)
+    @Column(name = "update_time", columnDefinition = "timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", updatable = false, insertable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected Date updateTime;
 
     @Column(columnDefinition = "bit", length = 1)
-    protected Integer deleted = 1;
+    protected Integer deleted = 0;
 
     public Integer getId() {
         return id;

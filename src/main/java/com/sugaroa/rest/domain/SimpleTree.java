@@ -2,6 +2,7 @@ package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -45,6 +46,11 @@ public class SimpleTree implements Serializable {
     protected List<Object> children;
 
     public SimpleTree() {
+    }
+
+    public SimpleTree(Integer id) {
+        super();
+        this.id = id;
     }
 
     public SimpleTree(Integer id, Integer parentId, String text) {

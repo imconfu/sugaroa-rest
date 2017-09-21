@@ -24,9 +24,9 @@ public class Menu extends SimpleTree {
     @JsonSerialize(using = PermissionListSerializer.class)
     private List<Permission> permissions;
 
-    private String href;
+    private String href = "";
 
-    protected Integer sort;
+    protected Integer sort = 100;
 
     public Menu() {
     }

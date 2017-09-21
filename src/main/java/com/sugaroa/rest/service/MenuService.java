@@ -159,8 +159,8 @@ public class MenuService {
     public Map<Integer, String> getPairs() {
         Map<Integer, String> result = new HashMap<Integer, String>();
 
-        List<Menu> Menus = repository.findByEnabledAndDeleted(1, 0);
-        for (SimpleTree menu : Menus) {
+        List<Menu> menus = repository.findByEnabledAndDeleted(1, 0);
+        for (SimpleTree menu : menus) {
             result.put(menu.getId(), menu.getText());
         }
         return result;
@@ -195,6 +195,7 @@ public class MenuService {
 
         //根据params对需要更新的值做处理，即动态调用对应的setter方法
         for (Map.Entry<String, Object> entry : params.entrySet()) {
+            ////有设置关联权限
             if (entry.getKey().equals("permissions")) {
                 menu.getPermissions().clear();
                 List<Integer> permissions = (List<Integer>)entry.getValue();
@@ -210,8 +211,8 @@ public class MenuService {
         }
         //把实体类的值填充了，才能再做下一步处理。
 
-        //同pid下重名判断及path处理
-        if (params.containsKey("pid")) {
+        //同parentId下重名判断及path处理
+        if (params.containsKey("parentId")) {
             //判断同ID下text是否有重复
             int count = 0;
             if (menu.getId() == null) {
@@ -233,16 +234,6 @@ public class MenuService {
             } else {
                 menu.setPath("1");
             }
-        }
-        //有设置关联权限
-        if (params.containsKey("privileges")) {
-            Map<String, Integer> object = new HashMap<String, Integer>();
-            Set<Integer> list = new HashSet<Integer>();
-            //servicePrivilege.parse(menu.getPrivileges(), object, list);
-
-            //不能判断不为空才处理，可能就是要赋为空
-//            menu.setPrivilegeArray(list);
-//            menu.setPrivilegeObject(object);
         }
         return repository.save(menu);
     }
