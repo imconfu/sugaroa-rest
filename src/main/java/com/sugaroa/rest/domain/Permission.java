@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "shiro_permission")
 @DynamicUpdate
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 public class Permission extends SimpleTree {
     @Transient
     private static final long serialVersionUID = 1L;

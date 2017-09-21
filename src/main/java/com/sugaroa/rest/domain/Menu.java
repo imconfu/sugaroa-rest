@@ -1,21 +1,17 @@
 package com.sugaroa.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Entity
 @Table(name = "shiro_menu")
 @DynamicUpdate
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 public class Menu extends SimpleTree {
     @Transient
     private static final long serialVersionUID = 1L;
@@ -25,6 +21,7 @@ public class Menu extends SimpleTree {
     @JoinTable(name = "shiro_menu_permission",
             joinColumns = {@JoinColumn(name = "menu_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
+    @JsonSerialize(using = PermissionListSerializer.class)
     private List<Permission> permissions;
 
     private String href;

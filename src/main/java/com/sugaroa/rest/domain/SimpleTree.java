@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @MappedSuperclass
 @JsonInclude(JsonInclude.Include.NON_NULL)    //null值不返回
-public class SimpleTree {
+public class SimpleTree implements Serializable {
     @Id
     @GeneratedValue
     protected Integer id;
