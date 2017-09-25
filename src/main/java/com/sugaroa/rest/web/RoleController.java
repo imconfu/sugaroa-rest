@@ -1,6 +1,7 @@
 package com.sugaroa.rest.web;
 
 import com.sugaroa.rest.domain.Role;
+import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.service.RoleService;
@@ -41,5 +42,10 @@ public class RoleController {
     @RequestMapping("/roles/pairs")
     Map<Integer, String> getPairs() {
         return service.getPairs();
+    }
+
+    @RequestMapping("/roles/simplelist")
+    List<Role> getSimpleList() {
+        return service.getSimpleList();
     }
 }

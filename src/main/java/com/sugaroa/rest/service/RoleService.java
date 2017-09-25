@@ -1,9 +1,7 @@
 package com.sugaroa.rest.service;
 
+import com.sugaroa.rest.domain.*;
 import com.sugaroa.rest.domain.Role;
-import com.sugaroa.rest.domain.Permission;
-import com.sugaroa.rest.domain.Role;
-import com.sugaroa.rest.domain.RoleRepository;
 import com.sugaroa.rest.exception.AppException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -25,7 +23,7 @@ public class RoleService {
         return repository.findOne(id);
     }
 
-    public Map<Integer,String> getPairs() {
+    public Map<Integer, String> getPairs() {
         Map<Integer, String> result = new HashMap<Integer, String>();
 
         List<Role> roles = repository.findByEnabledAndDeleted(1, 0);
@@ -39,7 +37,6 @@ public class RoleService {
         List<Role> roles = repository.findByDeleted(0);
         return roles;
     }
-
 
 
     /**
@@ -73,10 +70,15 @@ public class RoleService {
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             ////有设置关联权限
             if (entry.getKey().equals("permissions")) {
-                role.getPermissions().clear();
-                List<Integer> permissions = (List<Integer>)entry.getValue();
-                for(Integer id : permissions) {
-                    role.getPermissions().add(new Permission(id));
+                List<Integer> permissions = (List<Integer>) entry.getValue();
+                if (permissions.size() > 0) {
+                    if (permissions != null) {
+                        role.getPermissions().clear();
+                    }
+                    for (Integer id : permissions) {
+                        role.getPermissions().add(new Permission(id));
+                    }
+
                 }
             } else {
                 //只要有传参数进来，就认为修改该属性
@@ -84,5 +86,10 @@ public class RoleService {
             }
         }
         return repository.save(role);
+    }
+
+    public List<Role> getSimpleList() {
+        List<Role> roles = repository.getSimpleList();
+        return roles;
     }
 }

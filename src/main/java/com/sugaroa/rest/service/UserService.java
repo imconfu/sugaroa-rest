@@ -1,5 +1,6 @@
 package com.sugaroa.rest.service;
 
+import com.sugaroa.rest.domain.Role;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
@@ -40,7 +41,7 @@ public class UserService {
     /**
      * 创建
      */
-    public User save(Map<String, String[]> params) {
+    public User save(Map<String, Object> params) {
         User user = new User();
         return this.save(user, params);
     }
@@ -51,7 +52,7 @@ public class UserService {
      * @param id
      * @param params
      */
-    public User save(Integer id, Map<String, String[]> params) {
+    public User save(Integer id, Map<String, Object> params) {
 
         //先查找对应记录
         User user = repository.findOne(id);
@@ -59,20 +60,32 @@ public class UserService {
 
     }
 
-    public User save(User user, Map<String, String[]> params) {
+    public User save(User user, Map<String, Object> params) {
 
         //初始化BeanWrapper
         BeanWrapper bw = new BeanWrapperImpl(user);
 
         //根据params对需要更新的值做处理，即动态调用对应的setter方法
-        for (Map.Entry<String, String[]> entry : params.entrySet()) {
-            //只要有传参数进来，就认为修改该属性
-            bw.setPropertyValue(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if (entry.getKey().equals("roles")) {
+                List<Integer> roles = (List<Integer>) entry.getValue();
+                if (roles.size() > 0) {
+                    if (roles != null) {
+                        user.getRoles().clear();
+                    }
+                    for (Integer id : roles) {
+                        user.getRoles().add(new Role(id));
+                    }
+                }
+            } else {
+                //只要有传参数进来，就认为修改该属性
+                bw.setPropertyValue(entry.getKey(), entry.getValue());
+            }
         }
         //把实体类的值填充了，才能再做下一步处理。
 
         //同pid下重名判断及path处理
-        if (params.containsKey("password")) {
+        if (params.containsKey("password") && !user.getPassword().isEmpty()) {
             RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
             String salt = randomNumberGenerator.nextBytes().toHex();
             user.setSalt(salt);

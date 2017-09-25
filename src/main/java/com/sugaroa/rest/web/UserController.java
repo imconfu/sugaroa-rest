@@ -60,12 +60,12 @@ public class UserController {
             public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> predicates = new ArrayList<>();
 
-                if(account!=null && !account.isEmpty()){
-                    predicates.add(cb.like(root.get("account"), "%"+account+"%"));
+                if (account != null && !account.isEmpty()) {
+                    predicates.add(cb.like(root.get("account"), "%" + account + "%"));
                 }
 
-                if(mobile!=null && !mobile.isEmpty()){
-                    predicates.add(cb.like(root.get("mobile"), "%"+mobile+"%"));
+                if (mobile != null && !mobile.isEmpty()) {
+                    predicates.add(cb.like(root.get("mobile"), "%" + mobile + "%"));
                 }
 
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -74,14 +74,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
-    public User create(HttpServletRequest request) {
-        return service.save(request.getParameterMap());
+    public User create(@RequestBody Map<String, Object> params) {
+        return service.save(params);
     }
 
     @RequestMapping(value = "/users/{id}", method = RequestMethod.POST)
-    public User update(@Min(value = 1, message = "用户ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
+    public User update(@Min(value = 1, message = "用户ID必须大于1") @PathVariable Integer id, @RequestBody Map<String, Object> params) {
         System.out.println(id);
-        System.out.println(request.getParameterMap());
-        return service.save(id, request.getParameterMap());
+        return service.save(id, params);
     }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class Role extends Base implements Serializable {
             joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
     @JsonSerialize(using = PermissionListSerializer.class)
-    private List<Permission> permissions = new ArrayList<Permission>();
+    private List<Permission> permissions;
 
     //角色 <--> 用户关系: 多对多;
 //    @ManyToMany
@@ -41,8 +42,20 @@ public class Role extends Base implements Serializable {
     @JsonBackReference
     private List<User> users;// 一个角色对应多个用户
 
-    @Column(columnDefinition = "bit", length = 1)
-    protected Integer enabled = 1;
+    @Column(columnDefinition = "bit DEFAULT b'1'", length = 1, insertable = false)
+    protected Integer enabled;
+
+    public Role() {
+    }
+
+    public Role(Integer id) {
+        this.id = id;
+    }
+
+    public Role(Integer id, String title) {
+        this.id = id;
+        this.title = title;
+    }
 
     public String getCode() {
         return code;

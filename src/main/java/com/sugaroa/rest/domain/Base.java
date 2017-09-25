@@ -24,8 +24,9 @@ public class Base {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     protected Date updateTime;
 
-    @Column(columnDefinition = "bit", length = 1)
-    protected Integer deleted = 0;
+    //insertable = false可以使插入时有默认值，deleted不用初始化，JsonInclude.Include.NON_NULL可生效
+    @Column(columnDefinition = "bit DEFAULT b'0'", length = 1, insertable = false)
+    protected Integer deleted;
 
     public Integer getId() {
         return id;
