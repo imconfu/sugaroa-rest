@@ -34,7 +34,8 @@ public class UserService {
 
     @Autowired
     public UserService(UserRepository repository) {
-        this.repository = repository;;
+        this.repository = repository;
+        ;
     }
 
 
@@ -61,6 +62,8 @@ public class UserService {
     }
 
     public User save(User user, Map<String, Object> params) {
+        //password需要特殊处理
+        String password = (String) params.getOrDefault("password", "");
 
         //初始化BeanWrapper
         BeanWrapper bw = new BeanWrapperImpl(user);
@@ -77,6 +80,8 @@ public class UserService {
                         user.getRoles().add(new Role(id));
                     }
                 }
+            } else if (entry.getKey().equals("password")) {
+                continue;
             } else {
                 //只要有传参数进来，就认为修改该属性
                 bw.setPropertyValue(entry.getKey(), entry.getValue());
@@ -84,26 +89,17 @@ public class UserService {
         }
         //把实体类的值填充了，才能再做下一步处理。
 
-        //同pid下重名判断及path处理
-        if (params.containsKey("password") && !user.getPassword().isEmpty()) {
+        // 对password特殊处理
+        if (!password.isEmpty()) {
             RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
             String salt = randomNumberGenerator.nextBytes().toHex();
             user.setSalt(salt);
 
-            String saltPassword = new SimpleHash("MD5", user.getPassword(), ByteSource.Util.bytes(user.getCredentialsSalt()), 1).toHex();
+            //结果为：md5((username+salt)+password)
+            String saltPassword = new SimpleHash("MD5", password, ByteSource.Util.bytes(user.getCredentialsSalt()), 1).toHex();
             user.setPassword(saltPassword);
 
         }
-        //有设置关联权限
-//        if (params.containsKey("privileges")) {
-//            Map<String, Integer> object = new HashMap<String, Integer>();
-//            Set<Integer> list = new HashSet<Integer>();
-//            servicePrivilege.parse(user.getPrivileges(), object, list);
-//
-//            //不能判断不为空才处理，可能就是要赋为空
-//            user.setPrivilegeArray(list);
-//            user.setPrivilegeObject(object);
-//        }
         return repository.save(user);
     }
 

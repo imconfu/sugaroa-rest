@@ -52,6 +52,7 @@ public class StatelessRealm extends AuthorizingRealm {
         if(user == null){
             throw new AppException("用户不存在！");
         }
+        System.out.println(user.getCredentialsSalt());
 
         // 这里运算时实际为md5((username+salt)+password)，而不是md5(password+(username+salt))
         return new SimpleAuthenticationInfo(

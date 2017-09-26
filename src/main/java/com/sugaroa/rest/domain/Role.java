@@ -34,12 +34,11 @@ public class Role extends Base implements Serializable {
     private List<Permission> permissions;
 
     //角色 <--> 用户关系: 多对多;
-//    @ManyToMany
-//    @JoinTable(name = "shiro_user_role",
-//            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
-//            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
-    @ManyToMany(mappedBy = "roles")
-    @JsonBackReference
+    @ManyToMany
+    @JoinTable(name = "shiro_user_role",
+            joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
+    @JsonSerialize(using = UserListSerializer.class)
     private List<User> users;// 一个角色对应多个用户
 
     @Column(columnDefinition = "bit DEFAULT b'1'", length = 1, insertable = false)

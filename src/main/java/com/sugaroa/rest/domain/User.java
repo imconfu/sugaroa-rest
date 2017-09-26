@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -38,11 +39,11 @@ public class User extends Base implements Serializable {
     @Column(columnDefinition = "bit", length = 1)
     private Integer enabled;
 
-    @ManyToMany //(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
+    @ManyToMany(fetch = FetchType.EAGER) //立即从数据库中进行加载数据;
     @JoinTable(name = "shiro_user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
-    @JsonManagedReference
+    @JsonSerialize(using = RoleListSerializer.class)
     private List<Role> roles;
 
     public String getAccount() {
@@ -109,6 +110,7 @@ public class User extends Base implements Serializable {
         this.roles = roles;
     }
 
+    @JsonIgnore
     public String getCredentialsSalt() {
         return this.account + this.salt;
     }
