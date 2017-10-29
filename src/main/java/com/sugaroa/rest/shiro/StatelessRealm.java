@@ -20,6 +20,7 @@ public class StatelessRealm extends AuthorizingRealm {
 
     /**
      * 授权信息
+     * 从数据库读取授权信息后保存在AuthorizationInfo里
      *
      * @param principals
      * @return
@@ -27,6 +28,16 @@ public class StatelessRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.out.println("授权信息:doGetAuthorizationInfo(PrincipalCollection principals)");
+        String account = (String) principals.getPrimaryPrincipal();
+        User currUser = userService.findByUsername(account);
+//        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+//        authorizationInfo.addRole("role1");
+//        authorizationInfo.addRole("role2");
+//        authorizationInfo.addObjectPermission(new BitPermission("+user1+10"));
+//        authorizationInfo.addObjectPermission(new WildcardPermission("user1:*"));
+//        authorizationInfo.addStringPermission("+user2+10");
+//        authorizationInfo.addStringPermission("user2:*");
+//        return authorizationInfo;
         return null;
     }
 
@@ -49,7 +60,7 @@ public class StatelessRealm extends AuthorizingRealm {
         System.out.println(token.getCredentials());
 
         User user = userService.findByUsername(username);
-        if(user == null){
+        if (user == null) {
             throw new AppException("用户不存在！");
         }
         System.out.println(user.getCredentialsSalt());

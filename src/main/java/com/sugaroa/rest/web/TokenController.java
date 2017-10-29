@@ -10,9 +10,7 @@ import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.domain.Page;
@@ -52,16 +50,36 @@ public class TokenController {
         System.out.println("Request: token/grant");
 
         UsernamePasswordToken token = new UsernamePasswordToken(account, password);
+
         //手动调用验证，取代通过拦截器调用doGetAuthenticationInfo
-        AuthenticationInfo info = SecurityUtils.getSecurityManager().authenticate(token);
-        User user = (User) info.getPrincipals().getPrimaryPrincipal();
+        //AuthenticationInfo info = SecurityUtils.getSecurityManager().authenticate(token);
+        //User user = (User) info.getPrincipals().getPrimaryPrincipal();
+
+        // TODO 待验证
+        Subject currentUser = SecurityUtils.getSubject();
+
+        try {
+            currentUser.login(token);
+        } catch (UnknownAccountException uae) {
+            System.out.println("There is no user with username of " + token.getPrincipal());
+        } catch (IncorrectCredentialsException ice) {
+            System.out.println("Password for account " + token.getPrincipal() + " was incorrect!");
+        } catch (LockedAccountException lae) {
+            System.out.println("The account for username " + token.getPrincipal() + " is locked.  " +
+                    "Please contact your administrator to unlock it.");
+        }
+        // ... catch more exceptions here (maybe custom ones specific to your application?
+        catch (AuthenticationException ae) {
+            //unexpected condition?  error?
+        }
+        User user = (User) currentUser.getPrincipals().getPrimaryPrincipal();
 
         // 生成token
         Algorithm algorithm = Algorithm.HMAC256("secret12");
         String jwtToken = JWT.create()
                 .withIssuer("auth0")        //iss: jwt签发者
                 .withSubject("user")        //sub: jwt所面向的用户
-                //.withAudience()             //aud: 接收jwt的一方
+                //.withAudience()           //aud: 接收jwt的一方
                 //.withExpiresAt()          //exp: jwt的过期时间，这个过期时间必须要大于签发时间
                 //.withNotBefore()          //nbf: 定义在什么时间之前，该jwt都是不可用的.
                 .withIssuedAt(new Date())   //iat: jwt的签发时间
