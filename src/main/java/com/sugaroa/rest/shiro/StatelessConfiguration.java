@@ -78,13 +78,16 @@ public class StatelessConfiguration {
 
     /**
      * Realm实现
+     * TODO 这里继承SimpleCredentialsMatcher用自定义Matcher验证token
      * @return
      */
     @Bean
     public StatelessRealm statelessRealm(){
         StatelessRealm statelessRealm = new StatelessRealm();
         statelessRealm.setCachingEnabled(false);
-        statelessRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        //statelessRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        //设置自定义的jwt验证
+        statelessRealm.setCredentialsMatcher(jwtCredentialsMatcher());
         return statelessRealm;
     }
 
@@ -110,6 +113,16 @@ public class StatelessConfiguration {
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         hashedCredentialsMatcher.setHashIterations(1);
         return hashedCredentialsMatcher;
+    }
+
+    /**
+     * 验证JWT的CredentialsMatcher
+     * @return
+     */
+    @Bean
+    public JWTCredentialsMatcher jwtCredentialsMatcher(){
+        JWTCredentialsMatcher jwtCredentialsMatcher = new JWTCredentialsMatcher();
+        return jwtCredentialsMatcher;
     }
 
     @Bean

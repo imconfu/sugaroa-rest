@@ -60,6 +60,8 @@ public class TokenController {
 
         try {
             currentUser.login(token);
+            String username = (String) token.getPrincipal();
+            System.out.println("login username:"+username);
         } catch (UnknownAccountException uae) {
             System.out.println("There is no user with username of " + token.getPrincipal());
         } catch (IncorrectCredentialsException ice) {
