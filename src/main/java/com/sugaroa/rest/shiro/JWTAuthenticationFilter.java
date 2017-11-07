@@ -7,7 +7,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-public class JWTAuthenticationFilter extends AuthenticationFilter{
+public class JWTAuthenticationFilter extends AuthenticationFilter {
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         System.out.println("JWTAuthenticationFilter.onAccessDenied");

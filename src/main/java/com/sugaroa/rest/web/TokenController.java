@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.domain.UserRepository;
 import com.sugaroa.rest.exception.AppException;
+import com.sugaroa.rest.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -17,12 +18,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+//import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +36,10 @@ import java.util.Map;
 @Validated
 //@EnableAutoConfiguration
 public class TokenController {
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public TokenController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public TokenController(UserService userService) {
+        this.userService = userService;
     }
 
 
@@ -61,7 +66,7 @@ public class TokenController {
         try {
             currentUser.login(token);
             String username = (String) token.getPrincipal();
-            System.out.println("login username:"+username);
+            System.out.println("login username:" + username);
         } catch (UnknownAccountException uae) {
             System.out.println("There is no user with username of " + token.getPrincipal());
         } catch (IncorrectCredentialsException ice) {
@@ -104,18 +109,21 @@ public class TokenController {
      * @throws UnsupportedEncodingException
      */
     //(required=true, defaultValue="")
-    Map<String, Object> grant(@NotBlank(message = "帐号不能为空") @RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
+    @RequestMapping("/token/generate")
+    Map<String, Object> generate(@NotBlank(message = "帐号不能为空") @RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
         //userRepository.testAA();
-        User user = userRepository.findByAccount(account);
+        User user = userService.findByUsername(account);
         if (user == null) throw new AppException("用户不存在");
 
         //验证密码
-//        Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
-//        String md5Password = passwordEncoder.encodePassword(password, user.getSalt());
-//        //System.out.println(md5Password);
-//        if (!md5Password.equals(user.getPassword())) {
-//            throw new AppException("密码错误");
-//        }
+        // 这里运算时实际为md5((username+salt)+password)
+        String md5String = account + user.getSalt() + password;
+        System.out.println(md5String);
+        String md5Password = DigestUtils.md5DigestAsHex(md5String.getBytes("utf-8"));
+        System.out.println(md5Password);
+        if (!md5Password.equals(user.getPassword())) {
+            throw new AppException("密码错误");
+        }
 
         // 生成token
         Algorithm algorithm = Algorithm.HMAC256("secret12");
@@ -182,10 +190,10 @@ public class TokenController {
         return "Hello Wor1ld!";
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-    User user(@PathVariable String id) {
-        return userRepository.findByAccount(id);
-    }
+    //@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+    //User user(@PathVariable String id) {
+    //    return userRepository.findByAccount(id);
+    //}
 
 //    @RequestMapping("/users")
 //    Page<User> users() {

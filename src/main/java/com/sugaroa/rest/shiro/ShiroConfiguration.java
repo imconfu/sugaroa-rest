@@ -5,29 +5,28 @@ import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.*;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
-public class StatelessConfiguration {
+public class ShiroConfiguration {
 
 
     @Bean
-    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager){
-        ShiroFilterFactoryBean sffb  = new ShiroFilterFactoryBean();
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
+        System.out.println("ShiroConfiguration Enter！");
+        ShiroFilterFactoryBean sffb = new ShiroFilterFactoryBean();
 
         // 必须设置 SecurityManager
         sffb.setSecurityManager(securityManager);
 
-        Map<String, Filter> filters = new LinkedHashMap<String,Filter>();
+        Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         // 特别注意：这里不能用jwtAccessControlFilter函数作为put的值
         // 否则所有的请求都会被jwt这个过滤器拦截，还不知道为什么！！
         filters.put("jwt", new JWTAccessControlFilter());
@@ -38,10 +37,11 @@ public class StatelessConfiguration {
         //sffb.setLoginUrl("/token/grant");
 
         // 拦截器
-        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
         //"/**"这个过滤器放在最下面，authc：必须认证通过才可以访问
         filterChainDefinitionMap.put("/token/grant", "anon");
+        filterChainDefinitionMap.put("/token/generate", "anon");
         filterChainDefinitionMap.put("/**", "jwt");
         //filterChainDefinitionMap.put("/users/**", "jwtACF");
         //filterChainDefinitionMap.put("/token/grant", "anon");
@@ -53,8 +53,8 @@ public class StatelessConfiguration {
     }
 
     @Bean
-    public SecurityManager securityManager(){
-        DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
+    public SecurityManager securityManager() {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //设置realm.
         securityManager.setRealm(statelessRealm());
 
@@ -79,10 +79,11 @@ public class StatelessConfiguration {
     /**
      * Realm实现
      * TODO 这里继承SimpleCredentialsMatcher用自定义Matcher验证token
+     *
      * @return
      */
     @Bean
-    public StatelessRealm statelessRealm(){
+    public StatelessRealm statelessRealm() {
         StatelessRealm statelessRealm = new StatelessRealm();
         statelessRealm.setCachingEnabled(false);
         //statelessRealm.setCredentialsMatcher(hashedCredentialsMatcher());
@@ -95,7 +96,7 @@ public class StatelessConfiguration {
      * 会话管理器
      */
     @Bean
-    public DefaultSessionManager sessionManager(){
+    public DefaultSessionManager sessionManager() {
         DefaultSessionManager sessionManager = new DefaultSessionManager();
         sessionManager.setSessionValidationSchedulerEnabled(false);
 
@@ -104,10 +105,11 @@ public class StatelessConfiguration {
 
     /**
      * 密码的处理方法，md5(salt+passwork) 1次
+     *
      * @return
      */
     @Bean
-    public HashedCredentialsMatcher hashedCredentialsMatcher(){
+    public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("MD5");
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
@@ -117,21 +119,22 @@ public class StatelessConfiguration {
 
     /**
      * 验证JWT的CredentialsMatcher
+     *
      * @return
      */
     @Bean
-    public JWTCredentialsMatcher jwtCredentialsMatcher(){
+    public JWTCredentialsMatcher jwtCredentialsMatcher() {
         JWTCredentialsMatcher jwtCredentialsMatcher = new JWTCredentialsMatcher();
         return jwtCredentialsMatcher;
     }
 
     @Bean
-    public JWTAccessControlFilter jwtAccessControlFilter(){
+    public JWTAccessControlFilter jwtAccessControlFilter() {
         return new JWTAccessControlFilter();
     }
 
     @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter(){
+    public JWTAuthenticationFilter jwtAuthenticationFilter() {
         return new JWTAuthenticationFilter();
     }
 }

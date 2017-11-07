@@ -3,7 +3,6 @@ package com.sugaroa.rest.shiro;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
@@ -18,7 +17,7 @@ public class JWTCredentialsMatcher extends SimpleCredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         StatelessToken statelessToken = (StatelessToken) token;
-        String bearer = (String)info.getCredentials();
+        String bearer = (String) info.getCredentials();
         try {
             Algorithm algorithm = Algorithm.HMAC256("secret12");
             JWTVerifier verifier = JWT.require(algorithm)
