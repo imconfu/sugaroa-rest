@@ -1,5 +1,7 @@
 package com.sugaroa.rest.shiro;
 
+import com.sugaroa.rest.domain.Permission;
+import com.sugaroa.rest.domain.Role;
 import com.sugaroa.rest.domain.User;
 import com.sugaroa.rest.service.UserService;
 import org.apache.shiro.authc.*;
@@ -9,6 +11,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 public class StatelessRealm extends AuthorizingRealm {
 
@@ -36,7 +39,15 @@ public class StatelessRealm extends AuthorizingRealm {
         User currUser = userService.findByUsername(account);
         //获取用户role及permission信息
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        authorizationInfo.addRole("market");
+        List<Role> roles =  currUser.getRoles();
+        for(Role role : roles) {
+            authorizationInfo.addRole(role.getCode());
+            List<Permission> permissions = role.getPermissions();
+            for(Permission permission : permissions) {
+                authorizationInfo.addStringPermission(permission.getExpression());
+            }
+        }
+
 //        authorizationInfo.addRole("role2");
 //        authorizationInfo.addObjectPermission(new BitPermission("+user1+10"));
 //        authorizationInfo.addObjectPermission(new WildcardPermission("user1:*"));

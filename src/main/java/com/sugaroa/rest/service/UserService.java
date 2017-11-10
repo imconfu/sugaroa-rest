@@ -106,4 +106,5 @@ public class UserService {
     public User get(Integer id) {
         return repository.findOne(id);
     }
+
 }
