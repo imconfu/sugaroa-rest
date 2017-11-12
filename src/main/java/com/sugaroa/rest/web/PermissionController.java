@@ -57,8 +57,8 @@ public class PermissionController {
     List<Permission> getTree() {
         //基于字符串的权限检查
         Subject currentUser = SecurityUtils.getSubject();
-        String username = (String) currentUser.getPrincipal();
-        System.out.println("get username:"+username);
+        Integer userID = (Integer) currentUser.getPrincipal();
+        System.out.println("get username:"+userID);
         if (currentUser.hasRole("market")) {
             System.out.println("May the Schwartz be with you!");
         } else {

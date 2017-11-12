@@ -34,9 +34,9 @@ public class StatelessRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         System.out.println("授权信息:doGetAuthorizationInfo(PrincipalCollection principals)");
-        String account = (String) principals.getPrimaryPrincipal();
-        System.out.println("授权信息获取用户名:" + account);
-        User currUser = userService.findByUsername(account);
+        Integer userID = (Integer) principals.getPrimaryPrincipal();
+        System.out.println("授权信息获取用户ID:" + userID);
+        User currUser = userService.get(userID);
         //获取用户role及permission信息
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         List<Role> roles =  currUser.getRoles();
@@ -71,8 +71,8 @@ public class StatelessRealm extends AuthorizingRealm {
         System.out.println("身份验证:doGetAuthenticationInfo(AuthenticationToken token)");
 
         //这里先不验证用户是否存在或禁用
-        String bearer = (String) token.getCredentials(); //用户名
-        String account = (String) token.getPrincipal();
-        return new SimpleAuthenticationInfo(account, bearer, getName());
+        String bearer = (String) token.getCredentials();
+        Integer userID = (Integer) token.getPrincipal();    //用户ID
+        return new SimpleAuthenticationInfo(userID, bearer, getName());
     }
 }

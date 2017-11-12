@@ -6,7 +6,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 
 public class StatelessToken implements AuthenticationToken {
 
-    private String account;
+    private Integer userID;
     private String jsonWebToken;
 
     public StatelessToken(String jsonWebToken) {
@@ -15,11 +15,11 @@ public class StatelessToken implements AuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        if (account == null || account.isEmpty()) {
+        if (userID == null) {
             DecodedJWT jwt = JWT.decode(jsonWebToken);
-            account = jwt.getClaim("account").asString();
+            userID = jwt.getClaim("id").asInt();
         }
-        return account;
+        return userID;
     }
 
     @Override

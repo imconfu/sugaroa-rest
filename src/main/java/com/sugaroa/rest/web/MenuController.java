@@ -4,6 +4,8 @@ import com.sugaroa.rest.domain.Menu;
 import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.domain.User;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,9 +55,11 @@ public class MenuController {
     }
 
     @RequestMapping("/menus/currentuser")
-    List<Menu> getByCurrentUser(@RequestAttribute("userId") Integer userId) {
+    List<Menu> getByCurrentUser() {
+        Subject currentUser = SecurityUtils.getSubject();
+        Integer userID = (Integer) currentUser.getPrincipal();
         System.out.println("/menus/currentuser");
-        return service.getByCurrentUser(userId);
+        return service.getByCurrentUser(userID);
     }
 
 }
