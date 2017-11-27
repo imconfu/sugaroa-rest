@@ -6,6 +6,7 @@ import com.sugaroa.rest.domain.SimpleTree;
 import com.sugaroa.rest.service.MenuService;
 import com.sugaroa.rest.service.PermissionService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +32,7 @@ public class PermissionController {
         return service.getPairs();
     }
 
-
+    @RequiresRoles("admin")
     @RequestMapping(value = "/permissions/{id}")
     public Permission get(@Min(value = 99, message = "权限ID必须大于99") @PathVariable Integer id) {
         return service.get(id);
@@ -53,7 +54,10 @@ public class PermissionController {
     public Permission update(@Min(value = 1, message = "权限ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
         return service.save(id, request.getParameterMap());
     }
+
+
     @RequestMapping("/permissions")
+    @RequiresRoles("market")
     List<Permission> getTree() {
         //基于字符串的权限检查
         Subject currentUser = SecurityUtils.getSubject();

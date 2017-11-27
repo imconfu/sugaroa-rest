@@ -44,6 +44,7 @@ public class UserController {
     @RequestMapping("/users")
     Page<User> findAll(
             @RequestParam(value = "account", required = false) String account,
+            @RequestParam(value = "realname", required = false) String realname,
             @RequestParam(value = "mobile", required = false) String mobile,
             @Min(value = 2, message = "记录数必须大于2")
             @RequestParam(value = "rows", required = false) Integer size,
@@ -66,6 +67,10 @@ public class UserController {
 
                 if (mobile != null && !mobile.isEmpty()) {
                     predicates.add(cb.like(root.get("mobile"), "%" + mobile + "%"));
+                }
+
+                if (realname != null && !realname.isEmpty()) {
+                    predicates.add(cb.like(root.get("realname"), "%" + realname + "%"));
                 }
 
                 return cb.and(predicates.toArray(new Predicate[predicates.size()]));
