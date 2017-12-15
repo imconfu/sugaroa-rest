@@ -3,11 +3,11 @@ package com.sugaroa.rest.domain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
-@RepositoryRestResource(path = "menu")
+//@RepositoryRestResource(path = "menu")
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
     List<Menu> findByDeleted(@Param("deleted") Integer deleted);

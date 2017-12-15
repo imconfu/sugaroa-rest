@@ -32,7 +32,6 @@ public class PermissionController {
         return service.getPairs();
     }
 
-    @RequiresRoles("admin")
     @RequestMapping(value = "/permissions/{id}")
     public Permission get(@Min(value = 99, message = "权限ID必须大于99") @PathVariable Integer id) {
         return service.get(id);
@@ -50,6 +49,7 @@ public class PermissionController {
         return service.save(request.getParameterMap());
     }
 
+    @RequiresRoles("admin")
     @RequestMapping(value = "/permissions/{id}", method = RequestMethod.POST)
     public Permission update(@Min(value = 1, message = "权限ID必须大于1") @PathVariable Integer id, HttpServletRequest request) {
         return service.save(id, request.getParameterMap());

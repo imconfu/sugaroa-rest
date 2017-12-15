@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+//import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import javax.persistence.ColumnResult;
 import java.util.List;
 
-@RepositoryRestResource(path = "user")
+//@RepositoryRestResource(path = "user")
 //JpaRepository,PagingAndSortingRepository,SimpleJpaRepository
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     //List<User> findbyAccountLike(@Param("account") String account);
