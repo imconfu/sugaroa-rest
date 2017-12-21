@@ -1,11 +1,17 @@
 package com.sugaroa.rest;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @SpringBootApplication
+//屏蔽activiti rest默认的basic authentication，使用shiro+jwt的验证替代
+@EnableAutoConfiguration(exclude = {
+		org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration.class,
+		org.activiti.spring.boot.SecurityAutoConfiguration.class
+})
 public class RestApplication {
 
 	public static void main(String[] args) {

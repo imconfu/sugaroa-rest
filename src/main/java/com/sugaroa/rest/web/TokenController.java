@@ -42,64 +42,6 @@ public class TokenController {
         this.userService = userService;
     }
 
-
-//    @RequestMapping("/token/grant")
-//    public String tokenGrant(HttpServletRequest request, Map<String, Object> map) throws Exception {
-//        System.out.println("after token/grant");
-//        String exception = (String) request.getAttribute("shiroLoginFailure");
-//        return exception;
-//    }
-
-    @RequestMapping("/token/grant")
-    public Map<String, Object> tokenGrant(@RequestParam String account, @RequestParam String password) throws UnsupportedEncodingException {
-        System.out.println("Request: token/grant");
-
-        UsernamePasswordToken token = new UsernamePasswordToken(account, password);
-
-        //手动调用验证，取代通过拦截器调用doGetAuthenticationInfo
-        //AuthenticationInfo info = SecurityUtils.getSecurityManager().authenticate(token);
-        //User user = (User) info.getPrincipals().getPrimaryPrincipal();
-
-        // TODO 待验证
-        Subject currentUser = SecurityUtils.getSubject();
-
-        try {
-            currentUser.login(token);
-            String username = (String) token.getPrincipal();
-            System.out.println("login username:" + username);
-        } catch (UnknownAccountException uae) {
-            System.out.println("There is no user with username of " + token.getPrincipal());
-        } catch (IncorrectCredentialsException ice) {
-            System.out.println("Password for account " + token.getPrincipal() + " was incorrect!");
-        } catch (LockedAccountException lae) {
-            System.out.println("The account for username " + token.getPrincipal() + " is locked.  " +
-                    "Please contact your administrator to unlock it.");
-        }
-        // ... catch more exceptions here (maybe custom ones specific to your application?
-        catch (AuthenticationException ae) {
-            //unexpected condition?  error?
-        }
-        User user = (User) currentUser.getPrincipals().getPrimaryPrincipal();
-
-        // 生成token
-        Algorithm algorithm = Algorithm.HMAC256("secret12");
-        String jwtToken = JWT.create()
-                .withIssuer("auth0")        //iss: jwt签发者
-                .withSubject("user")        //sub: jwt所面向的用户
-                //.withAudience()           //aud: 接收jwt的一方
-                //.withExpiresAt()          //exp: jwt的过期时间，这个过期时间必须要大于签发时间
-                //.withNotBefore()          //nbf: 定义在什么时间之前，该jwt都是不可用的.
-                .withIssuedAt(new Date())   //iat: jwt的签发时间
-                //.withJWTId()              //jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
-                .withClaim("id", user.getId())
-                .withClaim("account", user.getAccount())
-                .sign(algorithm);
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("token", jwtToken);
-        //result.put("roles", user.getRoles()); //会有错误
-        return result;
-    }
-
     /**
      * 授权token，验证用户名及密码
      *

@@ -48,6 +48,8 @@ dependencies {
 
     // activiti
     compile("org.activiti:activiti-spring-boot-starter-basic:$activitiVersion")
+    compile("org.activiti:activiti-spring-boot-starter-rest-api:$activitiVersion")
+
 
     runtime('org.springframework.boot:spring-boot-devtools')
     runtime('com.h2database:h2')
