@@ -47,7 +47,7 @@ dependencies {
     compile("org.apache.shiro:shiro-ehcache:$shiroVersion")
 
     // activiti
-    compile("org.activiti:activiti-spring-boot-starter-basic:$activitiVersion")
+    //compile("org.activiti:activiti-spring-boot-starter-basic:$activitiVersion")
     compile("org.activiti:activiti-spring-boot-starter-rest-api:$activitiVersion")
 
 
